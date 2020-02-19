@@ -1,8 +1,7 @@
 package com.versilistyson.androidstreeteats.data.firebase.models
 
-import com.google.firebase.firestore.FirebaseFirestore
+import com.versilistyson.androidstreeteats.data.util.FirestoreDocument
+import com.versilistyson.androidstreeteats.data.util.Mappable
 
-interface FirestoreDto {
-    val key: String
-    val mappedData: HashMap<String, Any?>
+abstract class FirestoreDto<T>: Mappable<T>, FirestoreDocument {
 }
