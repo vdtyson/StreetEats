@@ -3,11 +3,10 @@ package com.versilistyson.androidstreeteats.data.util
 object FirestorePaths {
     // Accounts
     const val COLLECTION_ACCOUNT = "accounts"
-        // Business Accounts
-        const val DOC_BUSINESS = "businesses"
-        const val DOC_BUSINESS_INFO = "business_info"
+        // Vendor Accounts
+        const val DOC_VENDORS = "vendors"
         // Foodie Accounts
-        const val DOC_FOODIE = "foodies"
+        const val DOC_CUSTOMERS = "customers"
         const val DOC_FOODIE_INFO = "foodie_info"
         // Worker Accounts
         const val DOC_WORKER_INFO = "worker_info"

@@ -3,7 +3,7 @@ package com.versilistyson.androidstreeteats.presentation.util
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
-import com.versilistyson.androidstreeteats.domain.common.Failure
+import com.versilistyson.androidstreeteats.domain.exception.Failure
 
 fun <T: Any, L: LiveData<T>> LifecycleOwner.observe(liveData: L, body: (T?) -> Unit) =
     liveData.observe(this, Observer(body))

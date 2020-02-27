@@ -1,17 +1,18 @@
 package com.versilistyson.androidstreeteats.domain.repository
 
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseUser
 import com.versilistyson.androidstreeteats.domain.common.Either
-import com.versilistyson.androidstreeteats.domain.common.Failure
+import com.versilistyson.androidstreeteats.domain.exception.Failure
 
 interface IAuthenticationRepository: BaseRepository {
 
-    suspend fun createUserWithEmailAndPassword(email: String, password: String): Either<Failure, FirebaseUser>
+    suspend fun createUserWithEmail(email: String, password: String): Either<Failure, AuthResult>
 
-    suspend fun signInAccountWithEmailAndPassword(
+    suspend fun signInWithEmail(
         email: String,
         password: String
-    ): Either<Failure, FirebaseUser>
+    ): Either<Failure, AuthResult>
 
     suspend fun fetchSignedInUser(): FirebaseUser?
     suspend fun signOut()

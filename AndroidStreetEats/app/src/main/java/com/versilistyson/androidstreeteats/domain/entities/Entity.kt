@@ -4,18 +4,19 @@ import com.versilistyson.androidstreeteats.data.firebase.models.AccountType
 import com.versilistyson.androidstreeteats.data.firebase.models.CustomerInfoDto
 import com.versilistyson.androidstreeteats.data.firebase.models.UserInfoDto
 import com.versilistyson.androidstreeteats.data.firebase.models.VendorInfoDto
-import com.versilistyson.androidstreeteats.data.util.Mappable
+import com.versilistyson.androidstreeteats.domain.common.Mappable
 
 /*interface EmptyEntity<T> {
     fun empty() : T
 }*/
-sealed class Entity<T>: Mappable<T> {
-}
+sealed class Entity<T>:
+    Mappable<T>
+
 data class UserInfo(
-    val firstName: String,
-    val lastName: String,
-    val accountType: String,
-    val email: String,
+    val firstName: String = "",
+    val lastName: String = "",
+    val accountType: String = "",
+    val email: String = "",
     val phone: String = ""
 ) : Entity<UserInfoDto>() {
     override fun map(): UserInfoDto =
@@ -29,10 +30,11 @@ data class UserInfo(
 }
 
 data class VendorInfo(
-    val vendorName: String,
+    val vendorName: String = "",
     val vendorLogoUrl: String = "",
     val isProAccount: Boolean = false
 ) : Entity<VendorInfoDto>() {
+
     override fun map(): VendorInfoDto =
         VendorInfoDto(
             vendorName = vendorName,
@@ -42,7 +44,7 @@ data class VendorInfo(
 }
 
 data class CustomerInfo(
-    val userName: String,
+    val userName: String = "",
     val profilePictureUrl: String = ""
 ) : Entity<CustomerInfoDto>() {
     override fun map(): CustomerInfoDto =

@@ -20,7 +20,7 @@ data class UserInfoDto(
             phone = phone
         )
 
-    override fun mapDocumentFields(): HashMap<String, Any> =
+    override fun mapDocumentFields(): HashMap<String, Any?> =
         hashMapOf(
             "firstName" to firstName,
             "lastName" to lastName,

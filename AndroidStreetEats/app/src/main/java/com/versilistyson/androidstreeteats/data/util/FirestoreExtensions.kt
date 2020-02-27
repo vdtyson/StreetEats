@@ -15,8 +15,8 @@ import kotlin.coroutines.suspendCoroutine
  *
  * @param updatedValues [Map] of field names (keys) and updated values (values)
  */
-fun DocumentReference.updateDocument(updatedValues: Map<String, Any>): Task<Void> =
+fun DocumentReference.updateDocument(updatedValues: Map<String, Any?>): Task<Void> =
     update(updatedValues)
 // SetOptions.merge() only replaces the values specified in updatedValues
-fun DocumentReference.setDocumentAndMerge(updatedValues: Map<String, Any>): Task<Void> =
+fun DocumentReference.setDocumentAndMerge(updatedValues: Map<String, Any?>): Task<Void> =
     set(updatedValues, SetOptions.merge())

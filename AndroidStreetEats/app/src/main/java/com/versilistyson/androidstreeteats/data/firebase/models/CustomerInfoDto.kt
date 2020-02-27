@@ -12,7 +12,7 @@ data class CustomerInfoDto(
             profilePictureUrl
         )
 
-    override fun mapDocumentFields(): HashMap<String, Any> =
+    override fun mapDocumentFields(): HashMap<String, Any?> =
         hashMapOf(
             "userName" to userName,
             "profilePictureUrl" to profilePictureUrl

@@ -33,13 +33,15 @@ sealed class Either<out L, out R> {
      * Creates a Left type.
      * @see Left
      */
-    fun <L> left(left: L): Left<L> = Left(left)
+    fun <L> left(left: L): Left<L> =
+        Left(left)
 
     /**
      * Creates a Left type.
      * @see Right
      */
-    fun <R> right(right: R): Right<R> = Right(right)
+    fun <R> right(right: R): Right<R> =
+        Right(right)
 
     /**
      * Applies fnL if this is a Left or fnR if this is a Right.
@@ -47,7 +49,7 @@ sealed class Either<out L, out R> {
      * @see Right
      */
 
-    fun either(fnL: (L) -> Any, fnR: (R) -> Any): Any =
+    fun fold(fnL: (L) -> Any, fnR: (R) -> Any): Any =
         when(this) {
             is Left -> fnL(left)
             is Right -> fnR(right)

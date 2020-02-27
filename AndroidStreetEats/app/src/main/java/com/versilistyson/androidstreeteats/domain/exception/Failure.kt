@@ -1,4 +1,4 @@
-package com.versilistyson.androidstreeteats.domain.common
+package com.versilistyson.androidstreeteats.domain.exception
 
 //https://github.com/GlueHome/common-android/blob/master/domain/src/main/kotlin/com/gluehome/common/domain/exceptions/Failure.kt
 
@@ -8,7 +8,8 @@ package com.versilistyson.androidstreeteats.domain.common
  */
 sealed class Failure(val exception: Exception = Exception("Failure")) {
 
-    data class FailedTransaction(val e: Exception = Exception("Failed Transaction")): Failure(e)
+
+
     data class NetworkConnection(val e: Exception = Exception("Network Connection")): Failure(e)
     data class ServerError(val e: Exception = Exception("Server Error")): Failure(e)
 

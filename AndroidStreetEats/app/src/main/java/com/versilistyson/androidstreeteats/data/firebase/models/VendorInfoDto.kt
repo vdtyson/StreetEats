@@ -14,7 +14,7 @@ data class VendorInfoDto(
             isProAccount = isProAccount
         )
 
-    override fun mapDocumentFields(): HashMap<String, Any> =
+    override fun mapDocumentFields(): HashMap<String, Any?> =
         hashMapOf(
             "vendorname" to vendorName,
             "vendorLogoUrl" to vendorLogoUrl,

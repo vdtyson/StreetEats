@@ -1,7 +1,7 @@
 package com.versilistyson.androidstreeteats.domain.usecase
 
 import com.versilistyson.androidstreeteats.domain.common.Either
-import com.versilistyson.androidstreeteats.domain.common.Failure
+import com.versilistyson.androidstreeteats.domain.exception.Failure
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch

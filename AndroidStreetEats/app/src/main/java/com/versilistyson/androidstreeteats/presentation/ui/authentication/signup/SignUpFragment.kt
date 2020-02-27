@@ -1,4 +1,4 @@
-package com.versilistyson.androidstreeteats.presentation.ui
+package com.versilistyson.androidstreeteats.presentation.ui.authentication.signup
 
 import android.content.Context
 import android.net.Uri
