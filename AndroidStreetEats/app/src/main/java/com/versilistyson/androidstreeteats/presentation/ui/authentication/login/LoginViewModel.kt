@@ -1,75 +1,110 @@
 package com.versilistyson.androidstreeteats.presentation.ui.authentication.login
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseUser
-import com.haroldadmin.vector.VectorState
-import com.haroldadmin.vector.VectorViewModel
+import com.versilistyson.androidstreeteats.data.firebase.models.AccountType
 import com.versilistyson.androidstreeteats.domain.common.Either
+import com.versilistyson.androidstreeteats.domain.entities.UserInfo
 import com.versilistyson.androidstreeteats.domain.exception.Failure
+import com.versilistyson.androidstreeteats.domain.exception.feature_failure.FireAuthFailure
+import com.versilistyson.androidstreeteats.domain.exception.feature_failure.FireAuthFailure.*
+import com.versilistyson.androidstreeteats.domain.exception.feature_failure.FirestoreFailure
 import com.versilistyson.androidstreeteats.domain.usecase.GetUserInfo
 import com.versilistyson.androidstreeteats.domain.usecase.SignInWithEmail
+import com.versilistyson.androidstreeteats.presentation.ui.common.BaseViewModel
+import com.versilistyson.androidstreeteats.presentation.ui.common.PageState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-data class LoginState(
-    val userAccountType: String? = null,
-    val loginProgress: LoginProgress = LoginProgress.Idle,
-    val failure: Failure? = null
-) : VectorState {
-    enum class LoginProgress {
-        Idle,
-        Loading,
-        Failure,
-        Success
+data class LoginPageState(
+    val loggedInUserAccountType: AccountType? = null,
+    val isLoginSuccessful: Boolean = false,
+    val errorType: ErrorType? = null,
+    val isLoading: Boolean
+
+) : PageState() {
+    enum class ErrorType {
+        SERVER,
+        NO_CONNECTION,
+        INVALID_CREDENTIALS
     }
 }
 
-class LoginViewModel
-@Inject constructor(
-    initialState: LoginState,
+class LoginViewModel(
+    initialPageState: LoginPageState,
     private val signInWithEmail: SignInWithEmail,
     private val getUserInfo: GetUserInfo
-) : VectorViewModel<LoginState>(initialState) {
+) : BaseViewModel<LoginPageState>(initialPageState) {
 
-    fun loginWithEmail(email: String, password: String) =
+    fun emailSignIn(email: String, password: String) =
         viewModelScope.launch {
-            setState {
-                copy(loginProgress = LoginState.LoginProgress.Loading)
-            }
-            launch {
-                signInWithEmail(this, SignInWithEmail.Params(email, password)) {
-                    when(it) {
-                        is Either.Left ->
-                            handleAuthFailure(it.left)
+            setLoadingState()
+            launch(Dispatchers.IO) {
+                signInWithEmail(this, SignInWithEmail.Params(email, password)) { authResult ->
+                    when (authResult) {
                         is Either.Right ->
-                            handAuthSuccess(this, it.right)
+                            handleFireAuthSuccess(this, authResult.right)
+                        is Either.Left ->
+                            handleLoginFailure(authResult.left)
                     }
                 }
             }
         }
 
-    private fun handleAuthFailure(failure: Failure) {
-        setState{
-            copy(loginProgress = LoginState.LoginProgress.Failure, failure = failure)
-        }
-    }
-
-    private fun handAuthSuccess(scope: CoroutineScope, authResult: AuthResult) {
+    private fun handleFireAuthSuccess(scope: CoroutineScope, authResult: AuthResult) {
         val uid = authResult.user!!.uid
-        getUserInfo(scope, GetUserInfo.Params(uid)) {
-            when(it) {
+        getUserInfo(scope, GetUserInfo.Params(uid)) { firestoreResult ->
+            when (firestoreResult) {
+
+                is Either.Right -> {
+                    val newUserInfo = firestoreResult.right
+                    setState { copy(loggedInUserAccountType = newUserInfo.accountType, isLoginSuccessful = true)}
+                }
                 is Either.Left ->
-                    handleAuthFailure(it.left)
-                is Either.Right ->
-                    setState {
-                        copy(userAccountType = it.right.accountType)
-                    }
+                    handleLoginFailure(firestoreResult.left)
             }
         }
     }
+
+
+    private fun handleLoginFailure(failure: Failure) {
+
+        when (failure) {
+            is Failure.NetworkConnection -> {
+                setErrorState("No Network Connection.") {
+                    setState {copy(errorType = LoginPageState.ErrorType.NO_CONNECTION)}
+                }
+            }
+            is Failure.ServerError -> {
+                val errorMessage = failure.e.message ?: ""
+                setErrorState(errorMessage) {
+                    setState { copy(errorType = LoginPageState.ErrorType.SERVER) }
+                }
+            }
+
+            is FireAuthFailure -> {
+                when(failure) {
+                    is InvalidCredentialsFailure -> {
+                        setErrorState("Invalid credentials.") {
+                            setState { copy(errorType = LoginPageState.ErrorType.INVALID_CREDENTIALS) }
+                        }
+                    }
+                    else -> {
+                        setErrorState("${failure.e.message}") {
+                            setState { copy(errorType = LoginPageState.ErrorType.INVALID_CREDENTIALS) }
+                        }
+                    }
+                }
+            }
+
+            is FirestoreFailure -> {
+                val errorMessage = failure.e.message ?: ""
+                setErrorState(errorMessage) {
+                    setState { copy(errorType = LoginPageState.ErrorType.SERVER) }
+                }
+            }
+        }
+    }
+
 }

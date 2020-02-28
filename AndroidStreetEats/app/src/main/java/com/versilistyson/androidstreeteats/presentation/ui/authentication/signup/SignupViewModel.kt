@@ -1,109 +1,127 @@
 package com.versilistyson.androidstreeteats.presentation.ui.authentication.signup
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseUser
-import com.haroldadmin.vector.VectorState
-import com.haroldadmin.vector.VectorViewModel
-import com.versilistyson.androidstreeteats.domain.common.Either
+import com.versilistyson.androidstreeteats.data.firebase.models.AccountType
+import com.versilistyson.androidstreeteats.domain.entities.BusinessInfo
 import com.versilistyson.androidstreeteats.domain.entities.CustomerInfo
-import com.versilistyson.androidstreeteats.domain.entities.VendorInfo
+import com.versilistyson.androidstreeteats.domain.entities.UserInfo
 import com.versilistyson.androidstreeteats.domain.exception.Failure
 import com.versilistyson.androidstreeteats.domain.usecase.CreateCustomerAccount
 import com.versilistyson.androidstreeteats.domain.usecase.CreateUserWithEmail
-import com.versilistyson.androidstreeteats.domain.usecase.CreateVendorAccount
+import com.versilistyson.androidstreeteats.domain.usecase.CreateBusinessAccount
+import com.versilistyson.androidstreeteats.presentation.ui.common.BaseViewModel
+import com.versilistyson.androidstreeteats.presentation.ui.common.PageState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-data class SignupState(
-    val failure: Failure? = null,
-    val authProgress: AuthProgress = AuthProgress.Idle,
-    val accountSignupType: AccountSignupType = AccountSignupType.None
-) : VectorState {
-    enum class AccountSignupType {
-        None,
-        Vendor,
-        Customer
+
+sealed class SignupPageState(
+    userAccountType: AccountType,
+    isSignupSuccessful: Boolean,
+    errorType: SignUpErrorType
+) : PageState() {
+    enum class SignUpErrorType {
+        SERVER,
+        BAD_CREDENTIALS
     }
-    enum class AuthProgress {
-        Idle,
-        Loading,
-        Success,
-        Failure
-    }
+
+    data class BusinessSignup(
+        val businessLogo: String = "",
+        val businessName: String = "",
+        val isSignupSuccessful: Boolean = false,
+        val errorType: SignUpErrorType
+    ) : SignupPageState(AccountType.BUSINESS, isSignupSuccessful, errorType)
+
+    data class CustomerSignup(
+        val username: String = "",
+        val isSignupSuccessful: Boolean = false,
+        val errorType: SignUpErrorType
+    ) : SignupPageState(AccountType.CUSTOMER, isSignupSuccessful, errorType)
 }
+
 class SignupViewModel
 @Inject constructor(
-    initialState: SignupState,
+    initialPageState: SignupPageState,
     private val createUserWithEmail: CreateUserWithEmail,
-    private val createVendorAccount: CreateVendorAccount,
+    private val createBusinessAccount: CreateBusinessAccount,
     private val createCustomerAccount: CreateCustomerAccount
-) : VectorViewModel<SignupState>(initialState) {
+) : BaseViewModel<SignupPageState>(initialPageState) {
 
-    fun vendorSignUpWithEmail(vendorInfo: VendorInfo, email: String, password: String) = viewModelScope.launch {
-        setState {
-            copy(authProgress = SignupState.AuthProgress.Loading, accountSignupType = SignupState.AccountSignupType.Vendor)
-        }
-        launch {
-            createUserWithEmail(this, CreateUserWithEmail.Params(email, password)) {result ->
-                when(result) {
-                    is Either.Right ->
-                        writeNewVendorAccount(this, result.right, vendorInfo)
-                    is Either.Left ->
-                        handleSignUpFailure(result.left)
-                }
-            }
-        }
-
-    }
-
-    fun customerSignUpWithEmail(customerInfo: CustomerInfo, email: String, password: String) = viewModelScope.launch {
-        setState {
-            copy(authProgress = SignupState.AuthProgress.Loading)
-        }
-        launch {
-            createUserWithEmail(this, CreateUserWithEmail.Params(email, password)) {result ->
-                when(result) {
-                    is Either.Right ->
-                        writeNewCustomerAccount(this, result.right, customerInfo)
-                    is Either.Left ->
-                        handleSignUpFailure(result.left)
-                }
-
-            }
-        }
-    }
-
-    private fun writeNewCustomerAccount(scope: CoroutineScope, authResult: AuthResult, customerInfo: CustomerInfo) {
-        createCustomerAccount(scope, CreateCustomerAccount.Params(authResult.user!!.uid, customerInfo)) { result ->
-            when(result) {
-                is Either.Right -> {
-                    setState { copy(authProgress = SignupState.AuthProgress.Success) }
-                }
-            }
-
-        }
-    }
-    private fun writeNewVendorAccount(scope: CoroutineScope, authResult: AuthResult, vendorInfo: VendorInfo) {
-        createVendorAccount(scope, CreateVendorAccount.Params(authResult.user!!.uid, vendorInfo)) {result ->
-            when(result) {
-                is Either.Right -> {
-                    setState {
-                        copy(authProgress = SignupState.AuthProgress.Success)
+    fun writeCustomerAccount(
+        email: String,
+        password: String,
+        customerInfo: CustomerInfo,
+        userInfo: UserInfo
+    ) = viewModelScope.launch {
+        setLoadingState()
+        launch(Dispatchers.IO) {
+            createUserAndAccountWithEmail(this, email, password, userInfo) { uid ->
+                createCustomerAccount(this, CreateCustomerAccount.Params(uid, customerInfo)) {
+                    it.fold(::handleSignupFailure) {
+                        setNonLoadingState() {
+                            setState {
+                                val state = currentState as SignupPageState.CustomerSignup
+                                state.copy(
+                                    username = customerInfo.userName,
+                                    isSignupSuccessful = true
+                                )
+                            }
+                        }
                     }
                 }
-                is Either.Left ->
-                    handleSignUpFailure(result.left)
             }
         }
     }
 
-    private fun handleSignUpFailure(failure: Failure) {
-        setState {
-            copy(failure = failure, authProgress = SignupState.AuthProgress.Failure)
+    fun createBusinessAccount(
+        email: String,
+        password: String,
+        businessInfo: BusinessInfo,
+        userInfo: UserInfo
+    ) = viewModelScope.launch {
+        setLoadingState()
+        launch(Dispatchers.IO) {
+            createUserAndAccountWithEmail(this, email, password, userInfo) { uid ->
+                createBusinessAccount(this, CreateBusinessAccount.Params(uid, businessInfo)) {
+                    it.fold(::handleSignupFailure) {
+                        setNonLoadingState {
+                            setState {
+                                val state = currentState as SignupPageState.BusinessSignup
+                                state.copy(
+                                    businessLogo = businessInfo.vendorLogoUrl,
+                                    businessName = businessInfo.vendorName,
+                                    isSignupSuccessful = true
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
+
+    private fun createUserAndAccountWithEmail(
+        scope: CoroutineScope,
+        email: String,
+        password: String,
+        userInfo: UserInfo,
+        fn: (uid: String) -> Any
+    ) {
+        createUserWithEmail(
+            scope,
+            CreateUserWithEmail.Params(email, password, userInfo)
+        ) {
+            it.fold(::handleSignupFailure) { authResult ->
+                fn.invoke(authResult.user!!.uid)
+            }
+        }
+    }
+
+
+    private fun handleSignupFailure(failure: Failure) {
+        TODO()
+    }
+
+
 }

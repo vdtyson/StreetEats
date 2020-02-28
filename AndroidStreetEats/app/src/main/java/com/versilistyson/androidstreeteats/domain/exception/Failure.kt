@@ -19,4 +19,8 @@ sealed class Failure(val exception: Exception = Exception("Failure")) {
     override fun equals(other: Any?): Boolean {
         return other is Failure
     }
+
+    override fun hashCode(): Int {
+        return exception.hashCode()
+    }
 }

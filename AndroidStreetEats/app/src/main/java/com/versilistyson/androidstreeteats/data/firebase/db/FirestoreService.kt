@@ -1,4 +1,5 @@
 package com.versilistyson.androidstreeteats.data.firebase.db
 
-interface FirestoreService {
-}
+import com.google.firebase.firestore.FirebaseFirestore
+
+class FirestoreService(override val instance: FirebaseFirestore) : IFirestoreService

@@ -2,10 +2,10 @@ package com.versilistyson.androidstreeteats.domain.datasource
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentSnapshot
-import com.versilistyson.androidstreeteats.data.firebase.models.VendorInfoDto
+import com.versilistyson.androidstreeteats.data.firebase.models.BusinessInfoDto
 
 interface IVendorSource: BaseDataSource {
     suspend fun fetchVendorInfo(uid: String): Task<DocumentSnapshot>
-    suspend fun writeNewVendorAccount(uid: String, vendorInfo: VendorInfoDto): Task<Void>
-    suspend fun updateVendorInfo(uid: String, updatedVendorInfo: VendorInfoDto): Task<Void>
+    suspend fun writeNewVendorAccount(uid: String, businessInfo: BusinessInfoDto): Task<Void>
+    suspend fun updateVendorInfo(uid: String, updatedBusinessInfo: BusinessInfoDto): Task<Void>
 }

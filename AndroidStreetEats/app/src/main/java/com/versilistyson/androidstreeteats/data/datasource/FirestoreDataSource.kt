@@ -3,17 +3,14 @@ package com.versilistyson.androidstreeteats.data.datasource
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.versilistyson.androidstreeteats.data.firebase.db.FirestoreService
 import com.versilistyson.androidstreeteats.data.util.setDocumentAndMerge
 import com.versilistyson.androidstreeteats.data.util.updateDocument
 
-abstract class FirestoreDataSource(streetEatsService: StreetEatsService, baseCollectionName: String) {
-
-
-    val firebaseFirestore = streetEatsService.firebaseFirestore
+abstract class FirestoreDataSource(private val firestoreService: FirestoreService, baseCollectionName: String = "") {
 
     protected open val baseCollectionReference by lazy {
-        firebaseFirestore
-            .collection(baseCollectionName)
+        firestoreService.instance.collection(baseCollectionName)
     }
 
     protected open fun writeDocumentAndMerge(
