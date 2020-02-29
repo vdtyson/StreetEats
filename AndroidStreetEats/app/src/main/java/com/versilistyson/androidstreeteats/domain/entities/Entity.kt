@@ -15,7 +15,7 @@ sealed class Entity<T>:
 data class UserInfo(
     val firstName: String = "",
     val lastName: String = "",
-    val accountType: AccountType,
+    val accountType: AccountType = AccountType.CUSTOMER,
     val email: String = "",
     val phone: String = ""
 ) : Entity<UserInfoDto>() {

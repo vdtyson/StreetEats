@@ -1,7 +1,12 @@
 package com.versilistyson.androidstreeteats.presentation.ui.authentication.login
 
+import androidx.databinding.Bindable
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthResult
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 import com.versilistyson.androidstreeteats.data.firebase.models.AccountType
 import com.versilistyson.androidstreeteats.domain.common.Either
 import com.versilistyson.androidstreeteats.domain.entities.UserInfo
@@ -18,11 +23,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 data class LoginPageState(
+    val uid: String = "",
     val loggedInUserAccountType: AccountType? = null,
     val isLoginSuccessful: Boolean = false,
-    val errorType: ErrorType? = null,
-    val isLoading: Boolean
-
+    val errorType: ErrorType? = null
 ) : PageState() {
     enum class ErrorType {
         SERVER,
@@ -31,15 +35,34 @@ data class LoginPageState(
     }
 }
 
-class LoginViewModel(
-    initialPageState: LoginPageState,
+class LoginViewModel
+@AssistedInject constructor(
+    @Assisted initialPageState: LoginPageState,
     private val signInWithEmail: SignInWithEmail,
     private val getUserInfo: GetUserInfo
 ) : BaseViewModel<LoginPageState>(initialPageState) {
 
+
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(initialPageState: LoginPageState): LoginViewModel
+    }
+
+    val email: MutableLiveData<String?> by lazy {
+        MutableLiveData<String?>()
+    }
+
+    val password: MutableLiveData<String?> by lazy {
+        MutableLiveData<String?>()
+    }
+
+    private fun isValidEmailAndPassword(): Boolean =
+        email.value != null || password.value != null
+
+
     fun emailSignIn(email: String, password: String) =
         viewModelScope.launch {
-            setLoadingState()
+            setLoadingState(true)
             launch(Dispatchers.IO) {
                 signInWithEmail(this, SignInWithEmail.Params(email, password)) { authResult ->
                     when (authResult) {
@@ -54,16 +77,8 @@ class LoginViewModel(
 
     private fun handleFireAuthSuccess(scope: CoroutineScope, authResult: AuthResult) {
         val uid = authResult.user!!.uid
-        getUserInfo(scope, GetUserInfo.Params(uid)) { firestoreResult ->
-            when (firestoreResult) {
-
-                is Either.Right -> {
-                    val newUserInfo = firestoreResult.right
-                    setState { copy(loggedInUserAccountType = newUserInfo.accountType, isLoginSuccessful = true)}
-                }
-                is Either.Left ->
-                    handleLoginFailure(firestoreResult.left)
-            }
+        setState {
+            copy(isLoginSuccessful = true, uid = uid)
         }
     }
 
@@ -72,26 +87,26 @@ class LoginViewModel(
 
         when (failure) {
             is Failure.NetworkConnection -> {
-                setErrorState("No Network Connection.") {
-                    setState {copy(errorType = LoginPageState.ErrorType.NO_CONNECTION)}
+                setErrorState(true, "No Network Connection") {
+                    setState { copy(errorType = LoginPageState.ErrorType.INVALID_CREDENTIALS) }
                 }
             }
             is Failure.ServerError -> {
                 val errorMessage = failure.e.message ?: ""
-                setErrorState(errorMessage) {
+                setErrorState(true, errorMessage) {
                     setState { copy(errorType = LoginPageState.ErrorType.SERVER) }
                 }
             }
 
             is FireAuthFailure -> {
-                when(failure) {
+                when (failure) {
                     is InvalidCredentialsFailure -> {
-                        setErrorState("Invalid credentials.") {
+                        setErrorState(true, "Invalid credentials.") {
                             setState { copy(errorType = LoginPageState.ErrorType.INVALID_CREDENTIALS) }
                         }
                     }
                     else -> {
-                        setErrorState("${failure.e.message}") {
+                        setErrorState(true, "${failure.e.message}") {
                             setState { copy(errorType = LoginPageState.ErrorType.INVALID_CREDENTIALS) }
                         }
                     }
@@ -100,7 +115,7 @@ class LoginViewModel(
 
             is FirestoreFailure -> {
                 val errorMessage = failure.e.message ?: ""
-                setErrorState(errorMessage) {
+                setErrorState(true, errorMessage) {
                     setState { copy(errorType = LoginPageState.ErrorType.SERVER) }
                 }
             }

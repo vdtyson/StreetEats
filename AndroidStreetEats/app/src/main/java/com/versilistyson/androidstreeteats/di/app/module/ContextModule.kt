@@ -4,30 +4,20 @@ import android.app.Application
 import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.versilistyson.androidstreeteats.di.scope.ApplicationScope
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
 
 @Module
-class AppModule {
+class ContextModule {
 
+    @Singleton
     @Provides
-    @ApplicationScope
     fun provideApplicationContext(application: Application): Context =
         application.applicationContext
 
+    @Singleton
     @Provides
-    @ApplicationScope
     fun provideApplication(application: Application): Application =
         application
-
-    @Provides
-    @ApplicationScope
-    fun provideFirebaseFirestore(): FirebaseFirestore =
-        FirebaseFirestore.getInstance()
-
-    @Provides
-    @ApplicationScope
-    fun provideFirebaseAuth(): FirebaseAuth =
-        FirebaseAuth.getInstance()
 }

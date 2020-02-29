@@ -1,5 +1,6 @@
 package com.versilistyson.androidstreeteats.data.repository
 
+import com.versilistyson.androidstreeteats.data.datasource.UserSource
 import com.versilistyson.androidstreeteats.data.firebase.models.UserInfoDto
 import com.versilistyson.androidstreeteats.data.util.objectFetchRequest
 import com.versilistyson.androidstreeteats.data.util.taskCompletionRequest
@@ -11,7 +12,7 @@ import com.versilistyson.androidstreeteats.domain.repository.IUserRepository
 import javax.inject.Inject
 
 class UserRepository
-@Inject constructor(private val source: IUserSource) : IUserRepository {
+@Inject constructor(private val source: UserSource) : IUserRepository {
 
     override suspend fun getUserInfo(uid: String): Either<Failure, UserInfo> =
         source.fetchUserInfo(uid).objectFetchRequest<UserInfoDto, UserInfo>(UserInfo())

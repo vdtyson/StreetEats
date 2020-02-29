@@ -3,78 +3,59 @@ package com.versilistyson.androidstreeteats.presentation.ui.common
 import com.haroldadmin.vector.VectorViewModel
 
 abstract class BaseViewModel<S : PageState>(initialState: S) : VectorViewModel<S>(initialState) {
-    protected open fun setLoadingState(fn: (() -> Any)? = null) {
-        when(fn) {
-            null ->
-                setPageLoadingState()
+
+
+    protected open fun setErrorState(
+        showError: Boolean,
+        errorMessage: String = "",
+        extraStateActions: (() -> Unit)? = null
+    ) {
+        when(extraStateActions) {
+            null -> {
+                setState {
+                    this.changeBaseErrorState(showError, errorMessage)
+                }
+            }
             else -> {
-                fn.invoke()
-                setPageLoadingState()
+                extraStateActions()
+                setState {
+                    this.changeBaseErrorState(showError, errorMessage)
+                }
             }
         }
     }
 
-    protected open fun setNonLoadingState(fn: (() -> Any)? = null) {
-        when(fn) {
-            null ->
-                setPageLoadingState()
+    protected open suspend fun setLoadingState(
+        isLoading: Boolean,
+        extraStateActions: (() -> Unit)? = null
+    ) {
+        when(extraStateActions) {
+            null -> {
+                setState {
+                    this.changeBaseLoadingState(isLoading)
+                }
+            }
             else -> {
-                fn.invoke()
-                setPageNonLoadingState()
+                extraStateActions()
+                setState {
+                    this.changeBaseLoadingState(isLoading)
+                }
             }
         }
     }
 
-
-
-    protected open fun setErrorState(message: String, fn: (() -> Any)? = null) =
-        when (fn) {
-            null ->
-                setPageErrorState(message)
-            else -> {
-                fn.invoke()
-                setPageErrorState(message)
-            }
-        }
-
-    protected  open fun setNonErrorState(fn: (() -> Any)? = null) =
-        when(fn) {
-            null ->
-              setPageNonErrorState()
-            else -> {
-                fn.invoke()
-                setPageNonErrorState()
-            }
-        }
-
-    private fun setPageNonErrorState() {
-        setState {
-            this._showError = false
-            this._errorMessage = ""
-            this
-        }
+    private fun S.changeBaseErrorState(showError: Boolean, errorMessage: String): S {
+        val newState = this
+        newState.isLoading = false
+        newState.showError = showError
+        newState.errorMessage = errorMessage
+        return newState
     }
-    private fun setPageErrorState(message: String) {
-        setState {
-            this._showError = true
-            this._errorMessage = message
-            this
-        }
+    private fun S.changeBaseLoadingState(isLoading: Boolean): S {
+        val newState = this
+        newState.isLoading = isLoading
+        return newState
     }
-
-    private fun setPageLoadingState() {
-        setState {
-            this._isLoading = true
-            this
-        }
-    }
-    private fun setPageNonLoadingState() {
-        setState {
-            this._isLoading = false
-            this
-        }
-    }
-
 }
 /*
 abstract class BaseViewModel(initialPageState: PageState)<S: PageState> : VectorViewModel<PageState>(initialPageState) {

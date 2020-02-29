@@ -5,8 +5,10 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.versilistyson.androidstreeteats.data.firebase.db.FirestoreService
 import com.versilistyson.androidstreeteats.data.firebase.models.UserInfoDto
 import com.versilistyson.androidstreeteats.domain.datasource.IUserSource
+import javax.inject.Inject
 
-class UserSource(firestoreService: FirestoreService) : IUserSource,
+class UserSource
+@Inject constructor(firestoreService: FirestoreService) : IUserSource,
     FirestoreDataSource(firestoreService,"users") {
 
     override suspend fun writeNewUser(uid: String, user: UserInfoDto): Task<Void> =

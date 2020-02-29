@@ -6,7 +6,7 @@ import com.versilistyson.androidstreeteats.domain.common.Either
 import com.versilistyson.androidstreeteats.domain.exception.Failure
 import javax.inject.Inject
 
-class GetFirebaseUser
+class GetSignedInUser
 @Inject constructor(private val authenticationRepository: AuthenticationRepository): UseCase<FirebaseUser?, UseCase.NoParams>() {
     override suspend fun run(params: NoParams): Either<Failure, FirebaseUser?> {
         val firebaseUser = authenticationRepository.fetchSignedInUser()

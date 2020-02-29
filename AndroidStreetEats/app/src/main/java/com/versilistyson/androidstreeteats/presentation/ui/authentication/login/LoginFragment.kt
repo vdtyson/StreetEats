@@ -1,46 +1,53 @@
 package com.versilistyson.androidstreeteats.presentation.ui.authentication.login
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
+import androidx.databinding.DataBindingUtil
+import com.haroldadmin.vector.fragmentViewModel
+import com.haroldadmin.vector.withState
 
 import com.versilistyson.androidstreeteats.R
-import com.versilistyson.androidstreeteats.presentation.ui.MainActivity
-import com.versilistyson.androidstreeteats.presentation.ui.SharedViewModel
+import com.versilistyson.androidstreeteats.databinding.FragmentSignInScreenBinding
+import com.versilistyson.androidstreeteats.presentation.ui.common.BaseFragment
 import javax.inject.Inject
 
 
-class LoginFragment : Fragment() {
+class LoginFragment : BaseFragment<LoginViewModel>() {
 
-    @Inject lateinit var loginViewModel: LoginViewModel
-    private lateinit var viewModelProviderFactory: ViewModelProvider.Factory
-    private lateinit var mainSharedViewModel: SharedViewModel
+    @Inject
+    lateinit var loginViewModelFactory: LoginViewModel.Factory
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
 
+    override val viewModel: LoginViewModel by fragmentViewModel { initialState, handle ->
+        loginViewModelFactory.create(initialState)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val activity = (activity as MainActivity)
-        viewModelProviderFactory = activity.viewModelFactory
-        mainSharedViewModel = ViewModelProvider(activity, viewModelProviderFactory).get(SharedViewModel::class.java)
-        loginViewModel = viewModelProviderFactory.create(LoginViewModel::class.java)
+        val loginBinding = FragmentSignInScreenBinding.inflate(layoutInflater)
+        loginBinding.lifecycleOwner = this
+        loginBinding.loginViewModel = viewModel
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sign_in_screen, container, false)
+        renderState(viewModel) {state ->
+            if(state.isLoginSuccessful) {
+                TODO()
+            }
+            if(state.showError) {
+                TODO()
+            }
+            if(state.isLoading) {
+                TODO()
+            }
+        }
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
-
-
 }

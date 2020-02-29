@@ -15,7 +15,7 @@ data class UserInfoDto(
         UserInfo(
            firstName = firstName,
             lastName = lastName,
-            accountType = accountType.name,
+            accountType = accountType,
             email = email,
             phone = phone
         )

@@ -3,8 +3,10 @@ package com.versilistyson.androidstreeteats.data.datasource
 import com.versilistyson.androidstreeteats.data.firebase.db.FirestoreService
 import com.versilistyson.androidstreeteats.data.firebase.models.CustomerInfoDto
 import com.versilistyson.androidstreeteats.domain.datasource.ICustomerSource
+import javax.inject.Inject
 
-class CustomerSource(firestoreService: FirestoreService) : ICustomerSource,
+class CustomerSource
+@Inject constructor(firestoreService: FirestoreService) : ICustomerSource,
     FirestoreDataSource(firestoreService, "customers") {
 
 

@@ -1,6 +1,8 @@
 package com.versilistyson.androidstreeteats.presentation.ui.authentication.signup
 
 import androidx.lifecycle.viewModelScope
+import com.squareup.inject.assisted.Assisted
+import com.squareup.inject.assisted.AssistedInject
 import com.versilistyson.androidstreeteats.data.firebase.models.AccountType
 import com.versilistyson.androidstreeteats.domain.entities.BusinessInfo
 import com.versilistyson.androidstreeteats.domain.entities.CustomerInfo
@@ -14,7 +16,6 @@ import com.versilistyson.androidstreeteats.presentation.ui.common.PageState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 sealed class SignupPageState(
     userAccountType: AccountType,
@@ -41,32 +42,35 @@ sealed class SignupPageState(
 }
 
 class SignupViewModel
-@Inject constructor(
-    initialPageState: SignupPageState,
+@AssistedInject constructor(
+    @Assisted initialPageState: SignupPageState,
     private val createUserWithEmail: CreateUserWithEmail,
     private val createBusinessAccount: CreateBusinessAccount,
     private val createCustomerAccount: CreateCustomerAccount
 ) : BaseViewModel<SignupPageState>(initialPageState) {
 
-    fun writeCustomerAccount(
+    @AssistedInject.Factory
+    interface Factory {
+        fun create(initialPageState: SignupPageState): SignupViewModel
+    }
+
+    fun signupCustomerAccountWithEmail(
         email: String,
         password: String,
         customerInfo: CustomerInfo,
         userInfo: UserInfo
     ) = viewModelScope.launch {
-        setLoadingState()
+        setLoadingState(true)
         launch(Dispatchers.IO) {
             createUserAndAccountWithEmail(this, email, password, userInfo) { uid ->
                 createCustomerAccount(this, CreateCustomerAccount.Params(uid, customerInfo)) {
                     it.fold(::handleSignupFailure) {
-                        setNonLoadingState() {
-                            setState {
-                                val state = currentState as SignupPageState.CustomerSignup
-                                state.copy(
-                                    username = customerInfo.userName,
-                                    isSignupSuccessful = true
-                                )
-                            }
+                        setState {
+                            val state = currentState as SignupPageState.CustomerSignup
+                            state.copy(
+                                username = customerInfo.userName,
+                                isSignupSuccessful = true
+                            )
                         }
                     }
                 }
@@ -74,26 +78,24 @@ class SignupViewModel
         }
     }
 
-    fun createBusinessAccount(
+    fun signupBusinessAccountWithEmail(
         email: String,
         password: String,
         businessInfo: BusinessInfo,
         userInfo: UserInfo
     ) = viewModelScope.launch {
-        setLoadingState()
+        setLoadingState(true)
         launch(Dispatchers.IO) {
-            createUserAndAccountWithEmail(this, email, password, userInfo) { uid ->
+            createUserAndAccountWithEmail(this, email, password, userInfo) {uid ->
                 createBusinessAccount(this, CreateBusinessAccount.Params(uid, businessInfo)) {
                     it.fold(::handleSignupFailure) {
-                        setNonLoadingState {
-                            setState {
-                                val state = currentState as SignupPageState.BusinessSignup
-                                state.copy(
-                                    businessLogo = businessInfo.vendorLogoUrl,
-                                    businessName = businessInfo.vendorName,
-                                    isSignupSuccessful = true
-                                )
-                            }
+                        setState {
+                            val state = currentState as SignupPageState.BusinessSignup
+                            state.copy(
+                                businessLogo = businessInfo.vendorLogoUrl,
+                                businessName = businessInfo.vendorName,
+                                isSignupSuccessful = true
+                            )
                         }
                     }
                 }
@@ -113,15 +115,12 @@ class SignupViewModel
             CreateUserWithEmail.Params(email, password, userInfo)
         ) {
             it.fold(::handleSignupFailure) { authResult ->
-                fn.invoke(authResult.user!!.uid)
+                fn(authResult.user!!.uid)
             }
         }
     }
 
-
     private fun handleSignupFailure(failure: Failure) {
         TODO()
     }
-
-
 }

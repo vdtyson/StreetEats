@@ -1,5 +1,6 @@
 package com.versilistyson.androidstreeteats.data.repository
 
+import com.versilistyson.androidstreeteats.data.datasource.CustomerSource
 import com.versilistyson.androidstreeteats.data.firebase.models.CustomerInfoDto
 import com.versilistyson.androidstreeteats.data.util.objectFetchRequest
 import com.versilistyson.androidstreeteats.data.util.taskCompletionRequest
@@ -11,7 +12,7 @@ import com.versilistyson.androidstreeteats.domain.repository.ICustomerRepository
 import javax.inject.Inject
 
 class CustomerRepository
-@Inject constructor(private val source: ICustomerSource) : ICustomerRepository {
+@Inject constructor(private val source: CustomerSource) : ICustomerRepository {
 
     override suspend fun createNewCustomerAccount(
         uid: String,
