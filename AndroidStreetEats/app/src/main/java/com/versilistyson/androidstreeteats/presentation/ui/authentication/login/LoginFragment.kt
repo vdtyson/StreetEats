@@ -39,13 +39,14 @@ class LoginFragment : BaseFragment<LoginViewModel>() {
     ): View? {
         renderState(viewModel) {state ->
             if(state.isLoginSuccessful) {
-                TODO()
+                mainSharedViewModel.getSignedInFirebaseUser()
+                TODO("Navigate")
             }
             if(state.showError) {
-                TODO()
+                val errorMessage = state.errorMessage
             }
             if(state.isLoading) {
-                TODO()
+                TODO("Do loading stuff")
             }
         }
         return super.onCreateView(inflater, container, savedInstanceState)

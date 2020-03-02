@@ -48,12 +48,13 @@ class LoginViewModel
         fun create(initialPageState: LoginPageState): LoginViewModel
     }
 
-    val email: MutableLiveData<String?> by lazy {
-        MutableLiveData<String?>()
+
+    val email: MutableLiveData<String> by lazy {
+        MutableLiveData<String>()
     }
 
-    val password: MutableLiveData<String?> by lazy {
-        MutableLiveData<String?>()
+    val password: MutableLiveData<String> by lazy {
+        MutableLiveData<String>()
     }
 
     private fun isValidEmailAndPassword(): Boolean =
