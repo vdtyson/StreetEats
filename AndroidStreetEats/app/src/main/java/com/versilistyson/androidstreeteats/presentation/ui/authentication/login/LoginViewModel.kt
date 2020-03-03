@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseUser
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import com.versilistyson.androidstreeteats.data.firebase.models.AccountType
@@ -23,8 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 data class LoginPageState(
-    val uid: String = "",
-    val loggedInUserAccountType: AccountType? = null,
+    val firebaseUser: FirebaseUser? = null,
     val isLoginSuccessful: Boolean = false,
     val errorType: ErrorType? = null
 ) : PageState() {
@@ -38,8 +38,7 @@ data class LoginPageState(
 class LoginViewModel
 @AssistedInject constructor(
     @Assisted initialPageState: LoginPageState,
-    private val signInWithEmail: SignInWithEmail,
-    private val getUserInfo: GetUserInfo
+    private val signInWithEmail: SignInWithEmail
 ) : BaseViewModel<LoginPageState>(initialPageState) {
 
 
@@ -57,29 +56,34 @@ class LoginViewModel
         MutableLiveData<String>()
     }
 
-    private fun isValidEmailAndPassword(): Boolean =
-        email.value != null || password.value != null
+    private val isEmailAndPasswordFilled = {
+        email.value != null && password.value != null
+    }
 
 
-    fun emailSignIn(email: String, password: String) =
+    fun onLogin() =
         viewModelScope.launch {
-            setLoadingState(true)
-            launch(Dispatchers.IO) {
-                signInWithEmail(this, SignInWithEmail.Params(email, password)) { authResult ->
-                    when (authResult) {
-                        is Either.Right ->
-                            handleFireAuthSuccess(this, authResult.right)
-                        is Either.Left ->
-                            handleLoginFailure(authResult.left)
+            if (isEmailAndPasswordFilled()) {
+                setLoadingState(true)
+                launch(Dispatchers.IO) {
+                    signInWithEmail(this, SignInWithEmail.Params(email.value!!, password.value!!)) { authResult ->
+                        when (authResult) {
+                            is Either.Right ->
+                                handleFireAuthSuccess(authResult.right)
+                            is Either.Left ->
+                                handleLoginFailure(authResult.left)
+                        }
                     }
                 }
+            } else {
+                setErrorState(true) {setState { copy(errorType = LoginPageState.ErrorType.INVALID_CREDENTIALS) }}
             }
         }
 
-    private fun handleFireAuthSuccess(scope: CoroutineScope, authResult: AuthResult) {
-        val uid = authResult.user!!.uid
+    private fun handleFireAuthSuccess(authResult: AuthResult) {
+        val firebaseUser = authResult.user
         setState {
-            copy(isLoginSuccessful = true, uid = uid)
+            copy(isLoginSuccessful = true, firebaseUser = firebaseUser)
         }
     }
 

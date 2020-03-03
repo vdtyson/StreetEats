@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import com.haroldadmin.vector.fragmentViewModel
 
 import com.versilistyson.androidstreeteats.R
+import com.versilistyson.androidstreeteats.di.util.injector
 import com.versilistyson.androidstreeteats.presentation.ui.common.BaseFragment
 import javax.inject.Inject
 
@@ -23,12 +24,11 @@ class SignupFragment : BaseFragment<SignupViewModel>() {
     }
 
     override fun onAttach(context: Context) {
+        signupViewModelFactory = requireActivity().injector.signupViewModelFactory
         super.onAttach(context)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
-
-
 }

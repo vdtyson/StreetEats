@@ -12,7 +12,7 @@ import com.versilistyson.androidstreeteats.presentation.ui.MainActivity
 
 
 class StreetEatsApplication : Application(), InjectorProvider {
-    val appComponent by lazy {
+    private val appComponent by lazy {
         DaggerAppComponent.factory().create(this)
     }
     override val component: AppComponent

@@ -1,6 +1,7 @@
 package com.versilistyson.androidstreeteats.domain.usecase
 
 import com.google.firebase.auth.AuthResult
+import com.versilistyson.androidstreeteats.data.repository.AuthenticationRepository
 import com.versilistyson.androidstreeteats.data.repository.UserRepository
 import com.versilistyson.androidstreeteats.domain.common.Either
 import com.versilistyson.androidstreeteats.domain.entities.UserInfo
@@ -10,7 +11,7 @@ import javax.inject.Inject
 
 class CreateUserWithEmail
 @Inject constructor(
-    private val authenticationRepo: IAuthenticationRepository,
+    private val authenticationRepo: AuthenticationRepository,
     private val userRepo: UserRepository
 ) : UseCase<AuthResult, CreateUserWithEmail.Params>() {
 

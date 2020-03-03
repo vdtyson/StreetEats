@@ -78,14 +78,16 @@
                     android:weightSum="2">
 
                     <com.google.android.material.button.MaterialButton
+                        android:layout_marginEnd="4dp"
                         android:id="@+id/bttn_signIn"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
                         android:layout_weight="1"
-                        android:text="Sign In" />
+                        android:onClick="@{() -> loginViewModel.onLogin()}"
+                        android:text="Login" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:onClick="@{() -> loginViewModel.emailSignIn()}"
+                        android:layout_marginStart="4dp"
                         android:id="@+id/bttn_signUp"
                         android:layout_width="0dp"
                         android:layout_height="50dp"

@@ -1,8 +1,12 @@
 package com.versilistyson.androidstreeteats.presentation.ui
 
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseUser
+import com.haroldadmin.vector.VectorViewModelFactory
+import com.haroldadmin.vector.ViewModelOwner
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
 import com.squareup.okhttp.Dispatcher
@@ -25,6 +29,7 @@ class MainSharedViewModel
     @Assisted initialState: ActivityState,
     private val getSignedInUser: GetSignedInUser
 ) : BaseViewModel<ActivityState>(initialState) {
+
 
     @AssistedInject.Factory
     interface Factory {
