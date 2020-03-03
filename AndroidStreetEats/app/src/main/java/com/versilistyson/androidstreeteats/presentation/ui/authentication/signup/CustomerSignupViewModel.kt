@@ -1,5 +1,6 @@
 package com.versilistyson.androidstreeteats.presentation.ui.authentication.signup
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
@@ -17,31 +18,18 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-sealed class SignupPageState(
-    userAccountType: AccountType,
-    isSignupSuccessful: Boolean,
-    errorType: SignUpErrorType
+data class SignupPageState(
+    val isSignupSuccessful: Boolean,
+    val errorType: SignUpErrorType
 ) : PageState() {
     enum class SignUpErrorType {
         SERVER,
+        NETWORK,
         BAD_CREDENTIALS
     }
-
-    data class BusinessSignup(
-        val businessLogo: String = "",
-        val businessName: String = "",
-        val isSignupSuccessful: Boolean = false,
-        val errorType: SignUpErrorType
-    ) : SignupPageState(AccountType.BUSINESS, isSignupSuccessful, errorType)
-
-    data class CustomerSignup(
-        val username: String = "",
-        val isSignupSuccessful: Boolean = false,
-        val errorType: SignUpErrorType
-    ) : SignupPageState(AccountType.CUSTOMER, isSignupSuccessful, errorType)
 }
 
-class SignupViewModel
+class CustomerSignupViewModel
 @AssistedInject constructor(
     @Assisted initialPageState: SignupPageState,
     private val createUserWithEmail: CreateUserWithEmail,
@@ -51,7 +39,19 @@ class SignupViewModel
 
     @AssistedInject.Factory
     interface Factory {
-        fun create(initialPageState: SignupPageState): SignupViewModel
+        fun create(initialPageState: SignupPageState): CustomerSignupViewModel
+    }
+
+    val email: MutableLiveData<String> by lazy {
+        MutableLiveData<String>()
+    }
+
+    val username: MutableLiveData<String> by lazy {
+        MutableLiveData<String>()
+    }
+
+    val password: MutableLiveData<String> by lazy {
+        MutableLiveData<String>()
     }
 
     fun signupCustomerAccountWithEmail(
@@ -66,11 +66,7 @@ class SignupViewModel
                 createCustomerAccount(this, CreateCustomerAccount.Params(uid, customerInfo)) {
                     it.fold(::handleSignupFailure) {
                         setState {
-                            val state = currentState as SignupPageState.CustomerSignup
-                            state.copy(
-                                username = customerInfo.userName,
-                                isSignupSuccessful = true
-                            )
+                            copy(isSignupSuccessful = true)
                         }
                     }
                 }
@@ -78,30 +74,6 @@ class SignupViewModel
         }
     }
 
-    fun signupBusinessAccountWithEmail(
-        email: String,
-        password: String,
-        businessInfo: BusinessInfo,
-        userInfo: UserInfo
-    ) = viewModelScope.launch {
-        setLoadingState(true)
-        launch(Dispatchers.IO) {
-            createUserAndAccountWithEmail(this, email, password, userInfo) {uid ->
-                createBusinessAccount(this, CreateBusinessAccount.Params(uid, businessInfo)) {
-                    it.fold(::handleSignupFailure) {
-                        setState {
-                            val state = currentState as SignupPageState.BusinessSignup
-                            state.copy(
-                                businessLogo = businessInfo.vendorLogoUrl,
-                                businessName = businessInfo.vendorName,
-                                isSignupSuccessful = true
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     private fun createUserAndAccountWithEmail(
         scope: CoroutineScope,

@@ -13,16 +13,12 @@ sealed class Entity<T>:
     Mappable<T>
 
 data class UserInfo(
-    val firstName: String = "",
-    val lastName: String = "",
     val accountType: AccountType = AccountType.CUSTOMER,
     val email: String = "",
     val phone: String = ""
 ) : Entity<UserInfoDto>() {
     override fun map(): UserInfoDto =
         UserInfoDto(
-            firstName = firstName,
-            lastName = lastName,
             accountType = accountType,
             email = email,
             phone = phone
@@ -30,14 +26,20 @@ data class UserInfo(
 }
 
 data class BusinessInfo(
+    val ownerFirstName: String = "",
+    val ownerLastName: String = "",
     val vendorName: String = "",
+    val mainCity: String = "",
     val vendorLogoUrl: String = "",
     val isProAccount: Boolean = false
 ) : Entity<BusinessInfoDto>() {
 
     override fun map(): BusinessInfoDto =
         BusinessInfoDto(
+            ownerFirstName = ownerFirstName,
+            ownerLastName = ownerLastName,
             vendorName = vendorName,
+            mainCity = mainCity,
             vendorLogoUrl = vendorLogoUrl,
             isProAccount = isProAccount
         )
