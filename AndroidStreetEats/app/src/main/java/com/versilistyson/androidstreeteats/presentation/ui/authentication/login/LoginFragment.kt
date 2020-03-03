@@ -6,28 +6,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.haroldadmin.vector.*
 
-import com.versilistyson.androidstreeteats.R
 import com.versilistyson.androidstreeteats.databinding.FragmentLoginBinding
 import com.versilistyson.androidstreeteats.di.util.injector
-import com.versilistyson.androidstreeteats.presentation.ui.MainActivity
-import com.versilistyson.androidstreeteats.presentation.ui.MainSharedViewModel
-import com.versilistyson.androidstreeteats.presentation.ui.common.BaseFragment
+import com.versilistyson.androidstreeteats.presentation.ui.common.BaseVectorFragment
 import javax.inject.Inject
 
 
-class LoginFragment : BaseFragment<LoginViewModel>() {
+class LoginFragment : BaseVectorFragment<LoginViewModel>() {
 
 
     @Inject
     lateinit var loginViewModelFactory: LoginViewModel.Factory
 
-    lateinit var mainSharedViewModel: MainSharedViewModel
+    //lateinit var mainSharedViewModel: MainSharedViewModel
 
 
     override val viewModel: LoginViewModel by fragmentViewModel { initialState, handle ->
@@ -36,8 +30,14 @@ class LoginFragment : BaseFragment<LoginViewModel>() {
 
     private lateinit var loginBinding: FragmentLoginBinding
 
+    override fun onAttach(context: Context) {
+        this.findNavController()
+        super.onAttach(context)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val appComponent = requireActivity().injector
+        loginViewModelFactory = appComponent.loginViewModelFactory
         super.onCreate(savedInstanceState)
     }
 
@@ -58,7 +58,7 @@ class LoginFragment : BaseFragment<LoginViewModel>() {
         super.onViewCreated(view, savedInstanceState)
         renderState(viewModel) {state ->
             if(state.isLoginSuccessful) {
-                mainSharedViewModel.getSignedInFirebaseUser()
+                //mainSharedViewModel.getSignedInFirebaseUser()
                 Toast.makeText(this@LoginFragment.context,"Sign in successful",Toast.LENGTH_SHORT).show()
             }
             if(state.showError) {

@@ -1,21 +1,16 @@
 package com.versilistyson.androidstreeteats.presentation.ui.authentication.signup
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.haroldadmin.vector.fragmentViewModel
 
-import com.versilistyson.androidstreeteats.R
 import com.versilistyson.androidstreeteats.di.util.injector
-import com.versilistyson.androidstreeteats.presentation.ui.common.BaseFragment
+import com.versilistyson.androidstreeteats.presentation.ui.common.BaseVectorFragment
 import javax.inject.Inject
 
 
-class SignupFragment : BaseFragment<SignupViewModel>() {
+class SignupFragment : BaseVectorFragment<SignupViewModel>() {
+
     @Inject
     lateinit var signupViewModelFactory: SignupViewModel.Factory
 
@@ -31,4 +26,6 @@ class SignupFragment : BaseFragment<SignupViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
+
+
 }
