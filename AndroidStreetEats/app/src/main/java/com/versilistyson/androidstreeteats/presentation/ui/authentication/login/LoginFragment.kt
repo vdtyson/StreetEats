@@ -15,6 +15,7 @@ import com.haroldadmin.vector.*
 import com.versilistyson.androidstreeteats.R
 import com.versilistyson.androidstreeteats.databinding.FragmentLoginBinding
 import com.versilistyson.androidstreeteats.di.util.injector
+import com.versilistyson.androidstreeteats.presentation.ui.MainActivity
 import com.versilistyson.androidstreeteats.presentation.ui.MainSharedViewModel
 import com.versilistyson.androidstreeteats.presentation.ui.common.BaseFragment
 import javax.inject.Inject
@@ -22,28 +23,21 @@ import javax.inject.Inject
 
 class LoginFragment : BaseFragment<LoginViewModel>() {
 
-    @Inject
-    lateinit var mainSharedViewModelFactory: MainSharedViewModel.Factory
 
     @Inject
     lateinit var loginViewModelFactory: LoginViewModel.Factory
 
-    private val mainSharedViewModel: MainSharedViewModel by activityViewModel { initialState, handle ->
-        mainSharedViewModelFactory.create(initialState)
-    }
+    lateinit var mainSharedViewModel: MainSharedViewModel
 
 
     override val viewModel: LoginViewModel by fragmentViewModel { initialState, handle ->
         loginViewModelFactory.create(initialState)
     }
 
-
+    private lateinit var loginBinding: FragmentLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val appComponent = requireActivity().injector
-        loginViewModelFactory = appComponent.loginViewModelFactory
-        mainSharedViewModelFactory = appComponent.mainSharedViewModelFactory
-
         super.onCreate(savedInstanceState)
     }
 
@@ -52,7 +46,7 @@ class LoginFragment : BaseFragment<LoginViewModel>() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val loginBinding = FragmentLoginBinding.inflate(layoutInflater, container, false)
+        loginBinding = FragmentLoginBinding.inflate(layoutInflater, container, false)
         loginBinding.lifecycleOwner = this
         loginBinding.loginViewModel = viewModel
         return loginBinding.root
@@ -65,7 +59,7 @@ class LoginFragment : BaseFragment<LoginViewModel>() {
         renderState(viewModel) {state ->
             if(state.isLoginSuccessful) {
                 mainSharedViewModel.getSignedInFirebaseUser()
-                Toast.makeText(this@LoginFragment.context,"Yes",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@LoginFragment.context,"Sign in successful",Toast.LENGTH_SHORT).show()
             }
             if(state.showError) {
                 val errorMessage = state.errorMessage
@@ -77,8 +71,20 @@ class LoginFragment : BaseFragment<LoginViewModel>() {
                 }
             }
             if(state.isLoading) {
-                TODO("Show progress")
+                loginBinding.overlayForProgressbar.visibility = View.VISIBLE
+                loginBinding.loginProgressBar.animate()
+            } else {
+                loginBinding.overlayForProgressbar.visibility = View.GONE
+                loginBinding.loginProgressBar.clearAnimation()
             }
         }
+    }
+
+    private fun renderLoadingState(isLoading: Boolean) {
+
+    }
+
+    private fun renderErrorState() {
+
     }
 }
