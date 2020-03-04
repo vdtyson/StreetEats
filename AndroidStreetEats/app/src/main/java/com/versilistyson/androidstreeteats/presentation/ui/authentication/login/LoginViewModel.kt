@@ -1,32 +1,21 @@
 package com.versilistyson.androidstreeteats.presentation.ui.authentication.login
 
-import androidx.databinding.Bindable
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseUser
 import com.squareup.inject.assisted.Assisted
 import com.squareup.inject.assisted.AssistedInject
-import com.versilistyson.androidstreeteats.data.firebase.models.AccountType
-import com.versilistyson.androidstreeteats.domain.common.Either
-import com.versilistyson.androidstreeteats.domain.entities.UserInfo
 import com.versilistyson.androidstreeteats.domain.exception.Failure
-import com.versilistyson.androidstreeteats.domain.exception.feature_failure.FireAuthFailure
 import com.versilistyson.androidstreeteats.domain.exception.feature_failure.FireAuthFailure.*
-import com.versilistyson.androidstreeteats.domain.exception.feature_failure.FirestoreFailure
-import com.versilistyson.androidstreeteats.domain.usecase.GetUserInfo
 import com.versilistyson.androidstreeteats.domain.usecase.SignInWithEmail
 import com.versilistyson.androidstreeteats.presentation.ui.common.BaseViewModel
 import com.versilistyson.androidstreeteats.presentation.ui.common.PageState
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 data class LoginPageState(
-    val firebaseUser: FirebaseUser? = null,
-    val isLoginSuccessful: Boolean = false,
-    val errorType: ErrorType? = null
+    val uid: String = "",
+    val isLoginSuccessful: Boolean = false
 ) : PageState() {
     enum class ErrorType {
         SERVER,
@@ -57,74 +46,45 @@ class LoginViewModel
     }
 
     private val isEmailAndPasswordFilled = {
-        email.value != null && password.value != null
+        !email.value.isNullOrBlank() && !password.value.isNullOrBlank()
     }
 
 
     fun onLogin() =
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             if (isEmailAndPasswordFilled()) {
                 setLoadingState(true)
-                launch(Dispatchers.IO) {
-                    signInWithEmail(this, SignInWithEmail.Params(email.value!!, password.value!!)) { authResult ->
-                        when (authResult) {
-                            is Either.Right ->
-                                handleFireAuthSuccess(authResult.right)
-                            is Either.Left ->
-                                handleLoginFailure(authResult.left)
-                        }
-                    }
+                signInWithEmail(
+                    this,
+                    SignInWithEmail.Params(email.value!!, password.value!!)
+                ) { authResult ->
+                    authResult.fold({handleFailure(it)}, ::handleFireAuthSuccess)
                 }
             } else {
-                setErrorState(true) {setState { copy(errorType = LoginPageState.ErrorType.INVALID_CREDENTIALS) }}
+                setErrorState(true, "Fill all boxes") {
+                    it.copy(
+                        isLoginSuccessful = false
+                    )
+                }
             }
         }
 
     private fun handleFireAuthSuccess(authResult: AuthResult) {
-        val firebaseUser = authResult.user
+        val firebaseUser = authResult.user!!.uid
         setState {
-            copy(isLoginSuccessful = true, firebaseUser = firebaseUser)
+            copy(isLoginSuccessful = true, uid = firebaseUser)
         }
     }
 
 
-    private fun handleLoginFailure(failure: Failure) {
-
-        when (failure) {
-            is Failure.NetworkConnection -> {
-                setErrorState(true, "No Network Connection") {
-                    setState { copy(errorType = LoginPageState.ErrorType.INVALID_CREDENTIALS) }
-                }
-            }
-            is Failure.ServerError -> {
-                val errorMessage = failure.e.message ?: ""
-                setErrorState(true, errorMessage) {
-                    setState { copy(errorType = LoginPageState.ErrorType.SERVER) }
-                }
-            }
-
-            is FireAuthFailure -> {
-                when (failure) {
-                    is InvalidCredentialsFailure -> {
-                        setErrorState(true, "Invalid credentials.") {
-                            setState { copy(errorType = LoginPageState.ErrorType.INVALID_CREDENTIALS) }
-                        }
-                    }
-                    else -> {
-                        setErrorState(true, "${failure.e.message}") {
-                            setState { copy(errorType = LoginPageState.ErrorType.INVALID_CREDENTIALS) }
-                        }
-                    }
-                }
-            }
-
-            is FirestoreFailure -> {
-                val errorMessage = failure.e.message ?: ""
-                setErrorState(true, errorMessage) {
-                    setState { copy(errorType = LoginPageState.ErrorType.SERVER) }
-                }
-            }
+    override fun handleFailure(
+        failure: Failure,
+        extraStateChanges: ((LoginPageState) -> LoginPageState)?
+    ) {
+        when(failure) {
+            is InvalidCredentialsFailure ->
+                setErrorState(true, "Invalid Credentials.", failure = failure)
         }
+        super.handleFailure(failure, extraStateChanges)
     }
-
 }

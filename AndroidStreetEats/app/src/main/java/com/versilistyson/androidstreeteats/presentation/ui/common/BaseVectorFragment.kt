@@ -16,32 +16,24 @@ import com.haroldadmin.vector.activityViewModel
 import com.haroldadmin.vector.activityViewModelOwner
 import com.versilistyson.androidstreeteats.di.app.component.AppComponent
 import com.versilistyson.androidstreeteats.di.util.injector
+import com.versilistyson.androidstreeteats.domain.exception.Failure
 import com.versilistyson.androidstreeteats.presentation.ui.MainActivity
 import com.versilistyson.androidstreeteats.presentation.ui.MainSharedViewModel
 import javax.inject.Inject
 
-abstract class BaseVectorFragment<out VM: BaseViewModel<*>>: VectorFragment() {
+abstract class BaseVectorFragment<VM : BaseViewModel<*>> : VectorFragment() {
 
     abstract val viewModel: VM
     protected val navController: NavController by lazy {
         findNavController()
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
-
-    override fun onStart() {
-        super.onStart()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    abstract fun renderLoadingState(isLoading: Boolean)
+    abstract fun renderErrorState(showError: Boolean, errorMessage: String? = null, failure: Failure? = null)
 
 }
 
-abstract class BaseFragment: Fragment() {
+abstract class BaseFragment : Fragment() {
 
     protected val navController: NavController by lazy {
         findNavController()

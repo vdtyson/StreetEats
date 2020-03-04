@@ -1,54 +1,80 @@
 package com.versilistyson.androidstreeteats.presentation.ui.common
 
 import com.haroldadmin.vector.VectorViewModel
+import com.versilistyson.androidstreeteats.domain.exception.Failure
 
 abstract class BaseViewModel<S : PageState>(initialState: S) : VectorViewModel<S>(initialState) {
 
+    protected open fun handleFailure(failure: Failure, extraStateChanges: ((S) -> S)? = null) {
+        when(failure) {
+            is Failure.NetworkConnection -> {
+                setErrorState(true, "No Internet.", failure, extraStateChanges)
+            }
+            is Failure.ServerError -> {
+                setErrorState(true, "Server Error", failure, extraStateChanges)
+            }
+        }
+    }
 
     protected open fun setErrorState(
         showError: Boolean,
-        errorMessage: String = "",
-        extraStateActions: (() -> Unit)? = null
+        errorMessage: String? = null,
+        failure: Failure? = null,
+        extraStateChanges: ((S) -> S)? = null
     ) {
-        when(extraStateActions) {
-            null -> {
-                setState {
-                    this.changeBaseErrorState(showError, errorMessage)
-                }
-            }
-            else -> {
-                extraStateActions()
-                setState {
-                    this.changeBaseErrorState(showError, errorMessage)
-                }
-            }
-        }
+        onErrorState(showError, errorMessage,failure, extraStateChanges)
     }
 
     protected open suspend fun setLoadingState(
         isLoading: Boolean,
-        extraStateActions: (() -> Unit)? = null
+        extraStateChanges: ((S) -> S)? = null
     ) {
-        when(extraStateActions) {
+        onLoadingState(isLoading, extraStateChanges)
+    }
+
+    private fun onLoadingState(
+        isLoading: Boolean,
+        extraStateChanges: ((S) -> S)? = null
+    ) {
+        when(extraStateChanges) {
             null -> {
                 setState {
                     this.changeBaseLoadingState(isLoading)
                 }
             }
             else -> {
-                extraStateActions()
                 setState {
-                    this.changeBaseLoadingState(isLoading)
+                    val newState = extraStateChanges(this)
+                    newState.changeBaseLoadingState(isLoading)
+                }
+            }
+        }
+    }
+    private fun onErrorState(showError: Boolean,
+                             errorMessage: String? = null,
+                             failure: Failure? = null,
+                             extraStateChanges: ((S) -> S)? = null) {
+        when(extraStateChanges) {
+            null -> {
+                setState {
+                    this.changeBaseErrorState(showError, errorMessage, failure)
+                }
+            }
+            else -> {
+                setState {
+                    val newState = extraStateChanges(this)
+                    newState.changeBaseErrorState(showError, errorMessage, failure)
                 }
             }
         }
     }
 
-    private fun S.changeBaseErrorState(showError: Boolean, errorMessage: String): S {
+    private fun S.changeBaseErrorState(showError: Boolean, errorMessage: String?, failure: Failure?): S {
         val newState = this
         newState.isLoading = false
         newState.showError = showError
         newState.errorMessage = errorMessage
+        newState.failure
         return newState
     }
     private fun S.changeBaseLoadingState(isLoading: Boolean): S {

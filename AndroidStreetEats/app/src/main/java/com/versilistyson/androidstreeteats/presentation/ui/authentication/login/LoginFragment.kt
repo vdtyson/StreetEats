@@ -11,6 +11,7 @@ import com.haroldadmin.vector.*
 
 import com.versilistyson.androidstreeteats.databinding.FragmentLoginBinding
 import com.versilistyson.androidstreeteats.di.util.injector
+import com.versilistyson.androidstreeteats.domain.exception.Failure
 import com.versilistyson.androidstreeteats.presentation.ui.common.BaseVectorFragment
 import javax.inject.Inject
 
@@ -52,39 +53,31 @@ class LoginFragment : BaseVectorFragment<LoginViewModel>() {
         return loginBinding.root
     }
 
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         renderState(viewModel) {state ->
-            if(state.isLoginSuccessful) {
-                //mainSharedViewModel.getSignedInFirebaseUser()
-                Toast.makeText(this@LoginFragment.context,"Sign in successful",Toast.LENGTH_SHORT).show()
-            }
-            if(state.showError) {
-                val errorMessage = state.errorMessage
-                when(state.errorType) {
-                    LoginPageState.ErrorType.SERVER -> TODO()
-                    LoginPageState.ErrorType.NO_CONNECTION -> TODO()
-                    LoginPageState.ErrorType.INVALID_CREDENTIALS -> TODO()
-                    null -> TODO()
-                }
-            }
-            if(state.isLoading) {
-                loginBinding.overlayForProgressbar.visibility = View.VISIBLE
-                loginBinding.loginProgressBar.animate()
-            } else {
-                loginBinding.overlayForProgressbar.visibility = View.GONE
-                loginBinding.loginProgressBar.clearAnimation()
-            }
+            renderLoadingState(state.isLoading)
+            renderErrorState(state.showError, state.errorMessage, state.failure)
+            renderLoginSuccessState(state.isLoginSuccessful, state.uid)
         }
     }
 
-    private fun renderLoadingState(isLoading: Boolean) {
-
+    override fun renderLoadingState(isLoading: Boolean) {
+        if(isLoading) {
+            loginBinding.overlayForProgressbar.visibility = View.VISIBLE
+            loginBinding.loginProgressBar.animate()
+        } else {
+            loginBinding.overlayForProgressbar.visibility = View.GONE
+            loginBinding.loginProgressBar.clearAnimation()
+        }
     }
 
-    private fun renderErrorState() {
-
+    override fun renderErrorState(showError: Boolean, errorMessage: String?, failure: Failure?) {
+        Toast.makeText(this.context, errorMessage, Toast.LENGTH_SHORT).show()
+    }
+    private fun renderLoginSuccessState(isLoginSuccessful: Boolean, uid: String) {
+        if(isLoginSuccessful) {
+            Toast.makeText(this@LoginFragment.context,"uid: $uid",Toast.LENGTH_SHORT).show()
+        }
     }
 }

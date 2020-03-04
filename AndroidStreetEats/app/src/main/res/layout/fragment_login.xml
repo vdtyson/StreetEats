@@ -33,6 +33,7 @@
                 android:orientation="vertical">
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_forEmail"
                     app:boxCornerRadiusTopEnd="8dp"
                     app:boxCornerRadiusTopStart="8dp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
@@ -48,6 +49,7 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_forPassword"
                     app:boxCornerRadiusTopEnd="8dp"
                     app:boxCornerRadiusTopStart="8dp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"

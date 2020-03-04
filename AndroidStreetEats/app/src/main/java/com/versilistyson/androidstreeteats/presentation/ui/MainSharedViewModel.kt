@@ -52,19 +52,13 @@ class MainSharedViewModel
             }
         } else {
             setErrorState(true, "User not found.") {
-                setState {
-                    this.resetSignedInUser()
-                }
+               it.copy(firebaseUser = null, isSignedIn = false)
             }
         }
     }
 
     private fun handleUserFetchFailure(failure: Failure) {
-        setErrorState(true, "User not logged in.") {
-            setState {
-                this.resetSignedInUser()
-            }
-        }
+        setErrorState(true, "User not logged in.")
     }
 
 
