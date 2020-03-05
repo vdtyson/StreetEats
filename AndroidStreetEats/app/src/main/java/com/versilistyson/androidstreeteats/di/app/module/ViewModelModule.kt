@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.versilistyson.androidstreeteats.di.util.DaggerViewModelFactory
 import com.versilistyson.androidstreeteats.di.util.ViewModelKey
 import com.versilistyson.androidstreeteats.presentation.ui.MainSharedViewModel
+import com.versilistyson.androidstreeteats.presentation.ui.authentication.login.LoginViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -18,4 +19,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(MainSharedViewModel::class)
     abstract fun bindMainSharedViewModel(mainSharedViewModel: MainSharedViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(LoginViewModel::class)
+    abstract fun bindLoginViewModel(loginViewModel: LoginViewModel): ViewModel
 }

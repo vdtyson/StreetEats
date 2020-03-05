@@ -59,7 +59,7 @@ class CustomerSignupViewModel
         setLoadingState(true)
         launch(Dispatchers.IO) {
             createUserAndAccountWithEmail(this, email, password, userInfo) { uid ->
-                createCustomerAccount(this, CreateCustomerAccount.Params(uid, customerInfo)) {
+                createCustomerAccount(this, Dispatchers.IO, CreateCustomerAccount.Params(uid, customerInfo)) {
                     it.fold(::handleSignupFailure) {
                         setState {
                             copy(isSignupSuccessful = true)
@@ -80,6 +80,7 @@ class CustomerSignupViewModel
     ) {
         createUserWithEmail(
             scope,
+            Dispatchers.IO,
             CreateUserWithEmail.Params(email, password, userInfo)
         ) {
             it.fold(::handleSignupFailure) { authResult ->

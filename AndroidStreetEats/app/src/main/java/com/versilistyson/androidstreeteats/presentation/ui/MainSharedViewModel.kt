@@ -55,8 +55,8 @@ class MainSharedViewModel
         get() = _errorMessage
 
 
-    fun getFirebaseUser() = viewModelScope.launch(Dispatchers.IO) {
-        fetchFirebaseUser(this, NoParams()) { firebaseUserResult ->
+    fun getFirebaseUser() = viewModelScope.launch{
+        fetchFirebaseUser(this, Dispatchers.IO, NoParams()) { firebaseUserResult ->
             firebaseUserResult.fold(
                 ::handleFailure,
                 ::handleFirebaseUserFetchSuccess
@@ -64,10 +64,10 @@ class MainSharedViewModel
         }
     }
 
-    fun getUserInfo() = viewModelScope.launch(Dispatchers.IO) {
+    fun getUserInfo() = viewModelScope.launch{
         val firebaseUser = _firebaseUser
         if (firebaseUser.value != null) {
-            fetchUserInfo(this, FetchUserInfo.Params(firebaseUser.value!!.uid))
+            fetchUserInfo(this, Dispatchers.IO, FetchUserInfo.Params(firebaseUser.value!!.uid))
         } else {
             handleFailure(FireAuthFailure.NoFirebaseUser)
         }
