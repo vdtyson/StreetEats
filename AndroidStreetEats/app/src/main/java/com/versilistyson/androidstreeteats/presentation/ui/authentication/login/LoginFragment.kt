@@ -66,12 +66,11 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val userObserver = Observer<FirebaseUser>{ firebaseUser ->
-            renderToastFromMainActivity(firebaseUser)
-        }
+
         mainSharedViewModel.firebaseUser.observe(viewLifecycleOwner, Observer(::renderToastFromMainActivity))
         loginViewModel.isLoginSuccessful.observe(viewLifecycleOwner, Observer(::renderLoginSuccessState))
         loginViewModel.isLoading.observe(viewLifecycleOwner, Observer(::renderLoadingState))
+
     }
 
 

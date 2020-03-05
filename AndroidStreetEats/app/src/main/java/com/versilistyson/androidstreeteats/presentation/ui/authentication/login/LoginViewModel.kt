@@ -46,10 +46,9 @@ class LoginViewModel
     }
 
 
-    fun onLogin() =
-        viewModelScope.launch {
+    fun onLogin() {
             _isLoading.value = true
-            signInWithEmail(this, Dispatchers.IO, SignInWithEmail.Params(email.value!!, password.value!!)) {
+            signInWithEmail(viewModelScope, params = SignInWithEmail.Params(email.value!!, password.value!!)) {
                 it.fold(::handleFailure, ::handleFireAuthSuccess)
             }
         }

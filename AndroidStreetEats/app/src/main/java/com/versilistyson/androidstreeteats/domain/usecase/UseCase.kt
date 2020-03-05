@@ -10,8 +10,8 @@ abstract class UseCase<out Type, in Params> where Type: Any? {
 
     open operator fun invoke(
         scope: CoroutineScope,
-        dispatcher: CoroutineDispatcher = Dispatchers.IO,
         params: Params,
+        dispatcher: CoroutineDispatcher = Dispatchers.IO,
         onResult: (Either<Failure, Type>) -> Unit = {}
         ) {
         val backgroundJob = scope.async(dispatcher) { run(params) }

@@ -54,9 +54,16 @@ class MainSharedViewModel
     val errorMessage: LiveData<String>
         get() = _errorMessage
 
+    private val _isLoading: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>()
+    }
+    val isLoading: LiveData<Boolean>
+        get() = _isLoading
+
 
     fun getFirebaseUser() = viewModelScope.launch{
-        fetchFirebaseUser(this, Dispatchers.IO, NoParams()) { firebaseUserResult ->
+        _isLoading.value = true
+        fetchFirebaseUser(this, NoParams()) { firebaseUserResult ->
             firebaseUserResult.fold(
                 ::handleFailure,
                 ::handleFirebaseUserFetchSuccess
@@ -64,16 +71,17 @@ class MainSharedViewModel
         }
     }
 
-    fun getUserInfo() = viewModelScope.launch{
+    fun getUserInfo() {
         val firebaseUser = _firebaseUser
         if (firebaseUser.value != null) {
-            fetchUserInfo(this, Dispatchers.IO, FetchUserInfo.Params(firebaseUser.value!!.uid))
+            fetchUserInfo(viewModelScope, FetchUserInfo.Params(firebaseUser.value!!.uid))
         } else {
             handleFailure(FireAuthFailure.NoFirebaseUser)
         }
     }
 
     private fun handleFirebaseUserFetchSuccess(firebaseUser: FirebaseUser?) {
+        _isLoading.value = false
        _firebaseUser.postValue(firebaseUser)
     }
 
