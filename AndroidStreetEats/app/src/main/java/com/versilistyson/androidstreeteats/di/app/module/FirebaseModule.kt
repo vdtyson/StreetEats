@@ -7,14 +7,14 @@ import dagger.Provides
 import javax.inject.Singleton
 
 @Module
-class FirebaseModule {
+object FirebaseModule {
     @Singleton
-    @Provides
+    @Provides @JvmStatic
     fun provideFirebaseFirestore(): FirebaseFirestore =
         FirebaseFirestore.getInstance()
 
     @Singleton
-    @Provides
+    @Provides @JvmStatic
     fun provideFirebaseAuth(): FirebaseAuth =
         FirebaseAuth.getInstance()
 }

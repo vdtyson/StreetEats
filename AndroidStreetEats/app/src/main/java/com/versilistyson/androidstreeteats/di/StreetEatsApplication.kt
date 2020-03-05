@@ -2,6 +2,7 @@ package com.versilistyson.androidstreeteats.di
 
 import android.app.Activity
 import android.app.Application
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
@@ -18,5 +19,8 @@ class StreetEatsApplication : Application(), InjectorProvider {
     override val component: AppComponent
         get() = appComponent
 }
+
+val Activity.injector get() = (application as StreetEatsApplication).component
+val Fragment.activityInjector get() = requireActivity().injector
 
 

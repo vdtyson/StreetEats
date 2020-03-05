@@ -8,8 +8,6 @@ package com.versilistyson.androidstreeteats.domain.exception
  */
 sealed class Failure(val exception: Exception = Exception("Failure")) {
 
-
-
     data class NetworkConnection(val e: Exception = Exception("Network Connection")): Failure(e)
     data class ServerError(val e: Exception = Exception("Server Error")): Failure(e)
 

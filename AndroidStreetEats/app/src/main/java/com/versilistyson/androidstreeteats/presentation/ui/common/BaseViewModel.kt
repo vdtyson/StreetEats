@@ -3,15 +3,18 @@ package com.versilistyson.androidstreeteats.presentation.ui.common
 import com.haroldadmin.vector.VectorViewModel
 import com.versilistyson.androidstreeteats.domain.exception.Failure
 
-abstract class BaseViewModel<S : PageState>(initialState: S) : VectorViewModel<S>(initialState) {
+abstract class BaseViewModel<S : PageState<*>>(initialState: S) : VectorViewModel<S>(initialState) {
 
     protected open fun handleFailure(failure: Failure, extraStateChanges: ((S) -> S)? = null) {
         when(failure) {
             is Failure.NetworkConnection -> {
-                setErrorState(true, "No Internet.", failure, extraStateChanges)
+                setErrorState(true, failure.e.message, failure, extraStateChanges)
             }
             is Failure.ServerError -> {
-                setErrorState(true, "Server Error", failure, extraStateChanges)
+                setErrorState(true, failure.e.message, failure, extraStateChanges)
+            }
+            else -> {
+                setErrorState(true, failure.exception.message,failure, extraStateChanges)
             }
         }
     }

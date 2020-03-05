@@ -7,8 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.haroldadmin.vector.fragmentViewModel
 import com.versilistyson.androidstreeteats.databinding.FragmentSignupBinding
-
-import com.versilistyson.androidstreeteats.di.util.injector
+import com.versilistyson.androidstreeteats.di.app.component.AppComponent
 import com.versilistyson.androidstreeteats.domain.exception.Failure
 import com.versilistyson.androidstreeteats.presentation.ui.common.BaseVectorFragment
 import javax.inject.Inject
@@ -25,7 +24,6 @@ class CustomerSignupFragment : BaseVectorFragment<CustomerSignupViewModel>() {
     }
 
     override fun onAttach(context: Context) {
-        customerSignupViewModelFactory = requireActivity().injector.customerSignupViewModelFactory
         super.onAttach(context)
     }
 

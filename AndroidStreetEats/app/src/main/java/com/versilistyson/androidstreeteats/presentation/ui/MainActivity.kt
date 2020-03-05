@@ -2,29 +2,28 @@ package com.versilistyson.androidstreeteats.presentation.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.lifecycle.ViewModelProvider
+import androidx.activity.viewModels
 import androidx.navigation.fragment.NavHostFragment
-import com.haroldadmin.vector.activityViewModelOwner
 import com.haroldadmin.vector.viewModel
 import com.versilistyson.androidstreeteats.R
-import com.versilistyson.androidstreeteats.di.StreetEatsApplication
-import com.versilistyson.androidstreeteats.di.util.injector
+import com.versilistyson.androidstreeteats.di.injector
+import com.versilistyson.androidstreeteats.di.util.DaggerViewModelFactory
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
-   @Inject lateinit var mainSharedViewModelFactory: MainSharedViewModel.Factory
+    @Inject
+    lateinit var viewModelFactory: DaggerViewModelFactory
 
-    val mainSharedViewModel: MainSharedViewModel by viewModel { initialState, handle ->
-        mainSharedViewModelFactory.create(initialState)
+    private val mainSharedViewModel: MainSharedViewModel by viewModels{
+        viewModelFactory
     }
-
     private val host by lazy {
         NavHostFragment.create(R.navigation.nav_graph)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        mainSharedViewModelFactory = injector.mainSharedViewModelFactory
+        injector.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         supportFragmentManager

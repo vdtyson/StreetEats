@@ -4,8 +4,10 @@ import com.versilistyson.androidstreeteats.data.repository.UserRepository
 import com.versilistyson.androidstreeteats.domain.common.Either
 import com.versilistyson.androidstreeteats.domain.entities.UserInfo
 import com.versilistyson.androidstreeteats.domain.exception.Failure
+import javax.inject.Inject
 
-class GetUserInfo(private val userRepository: UserRepository): UseCase<UserInfo, GetUserInfo.Params>() {
+class FetchUserInfo
+@Inject constructor(private val userRepository: UserRepository): UseCase<UserInfo, FetchUserInfo.Params>() {
 
     data class Params(val uid: String)
 

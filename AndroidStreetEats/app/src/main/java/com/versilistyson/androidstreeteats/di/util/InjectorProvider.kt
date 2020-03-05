@@ -9,4 +9,3 @@ interface InjectorProvider {
     val component: AppComponent
 }
 
-val Activity.injector get() = (application as StreetEatsApplication).component

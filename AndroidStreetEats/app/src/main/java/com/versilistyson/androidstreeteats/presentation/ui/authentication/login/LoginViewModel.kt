@@ -14,14 +14,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 data class LoginPageState(
-    val uid: String = "",
     val isLoginSuccessful: Boolean = false
-) : PageState() {
-    enum class ErrorType {
-        SERVER,
-        NO_CONNECTION,
-        INVALID_CREDENTIALS
-    }
+) : PageState<LoginPageState>() {
+    override fun resetToDefaultState(): LoginPageState =
+        LoginPageState()
 }
 
 class LoginViewModel
@@ -53,12 +49,14 @@ class LoginViewModel
     fun onLogin() =
         viewModelScope.launch(Dispatchers.IO) {
             if (isEmailAndPasswordFilled()) {
-                setLoadingState(true)
+                setLoadingState(true) {
+                    it.resetToDefaultState()
+                }
                 signInWithEmail(
                     this,
                     SignInWithEmail.Params(email.value!!, password.value!!)
                 ) { authResult ->
-                    authResult.fold({handleFailure(it)}, ::handleFireAuthSuccess)
+                    authResult.fold({ handleFailure(it) }, ::handleFireAuthSuccess)
                 }
             } else {
                 setErrorState(true, "Fill all boxes") {
@@ -72,7 +70,7 @@ class LoginViewModel
     private fun handleFireAuthSuccess(authResult: AuthResult) {
         val firebaseUser = authResult.user!!.uid
         setState {
-            copy(isLoginSuccessful = true, uid = firebaseUser)
+            copy(isLoginSuccessful = true)
         }
     }
 
@@ -81,9 +79,14 @@ class LoginViewModel
         failure: Failure,
         extraStateChanges: ((LoginPageState) -> LoginPageState)?
     ) {
-        when(failure) {
-            is InvalidCredentialsFailure ->
-                setErrorState(true, "Invalid Credentials.", failure = failure)
+        when (failure) {
+            is InvalidCredentials ->
+                setErrorState(
+                    true,
+                    "Invalid Credentials.",
+                    failure = failure,
+                    extraStateChanges = extraStateChanges
+                )
         }
         super.handleFailure(failure, extraStateChanges)
     }

@@ -1,10 +1,7 @@
 package com.versilistyson.androidstreeteats.data.util
 
 import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseAuthEmailException
-import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.*
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.versilistyson.androidstreeteats.data.firebase.models.FirestoreDto
@@ -15,10 +12,12 @@ import com.versilistyson.androidstreeteats.domain.exception.feature_failure.Fire
 
 import java.io.IOException
 
-suspend inline fun <reified T : FirestoreDto<R>, R> Task<DocumentSnapshot>.objectFetchRequest(emptyDefault: R): Either<Failure, R> =
+suspend inline fun <reified T : FirestoreDto<R>, R> Task<DocumentSnapshot>.objectFetchRequest(
+    emptyDefault: R
+): Either<Failure, R> =
     try {
         val snapshot = this.awaitTask()
-        when(val mappedDto = snapshot.toObject(T::class.java)) {
+        when (val mappedDto = snapshot.toObject(T::class.java)) {
             null -> Either.Right(emptyDefault)
             else -> {
                 Either.Right(mappedDto.map())
@@ -48,10 +47,14 @@ suspend fun Task<AuthResult>.fireAuthRequest(): Either<Failure, AuthResult> =
     } catch (e: IOException) {
         Either.Left(Failure.ServerError(e))
     } catch (e: FirebaseAuthInvalidCredentialsException) {
-        Either.Left(InvalidCredentialsFailure(e))
-    } catch(e: FirebaseAuthEmailException) {
-        Either.Left(EmailFailure(e))
+        Either.Left(InvalidCredentials(e))
+    } catch (e: FirebaseAuthRecentLoginRequiredException) {
+        Either.Left(CredentialsExpired(e))
+    } catch (e: FirebaseAuthUserCollisionException) {
+        Either.Left(ExistingUserConflict(e))
+    } catch (e: FirebaseAuthEmailException) {
+        Either.Left(EmailNotSent(e))
     } catch (e: FirebaseAuthException) {
-        Either.Left(AuthFailure(e))
+        Either.Left(Other(e))
     }
 

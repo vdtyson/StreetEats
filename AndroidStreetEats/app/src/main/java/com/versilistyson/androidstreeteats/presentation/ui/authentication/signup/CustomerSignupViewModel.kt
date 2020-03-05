@@ -19,14 +19,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 data class SignupPageState(
-    val isSignupSuccessful: Boolean,
-    val errorType: SignUpErrorType
-) : PageState() {
-    enum class SignUpErrorType {
-        SERVER,
-        NETWORK,
-        BAD_CREDENTIALS
-    }
+    val isSignupSuccessful: Boolean = false
+) : PageState<SignupPageState>() {
+    override fun resetToDefaultState(): SignupPageState =
+        SignupPageState()
 }
 
 class CustomerSignupViewModel
