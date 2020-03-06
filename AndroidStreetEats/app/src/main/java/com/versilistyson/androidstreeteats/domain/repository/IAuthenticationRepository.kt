@@ -1,6 +1,7 @@
 package com.versilistyson.androidstreeteats.domain.repository
 
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.versilistyson.androidstreeteats.domain.common.Either
 import com.versilistyson.androidstreeteats.domain.exception.Failure

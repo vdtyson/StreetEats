@@ -4,5 +4,4 @@ import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Inject
 
 class FirebaseAuthService
-@Inject constructor(override val instance: FirebaseAuth) : IFirebaseAuthService {
-}
+@Inject constructor(override val instance: FirebaseAuth) : IFirebaseAuthService

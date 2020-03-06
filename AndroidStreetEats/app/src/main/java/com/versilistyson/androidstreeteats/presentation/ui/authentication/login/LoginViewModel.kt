@@ -11,7 +11,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
+sealed class LoginState {
+    object SuccessfulLogin: LoginState()
+    data class FailedLogin(val failure: Failure): LoginState()
+    object Loading: LoginState()
+}
 class LoginViewModel
 @Inject constructor(
     private val signInWithEmail: SignInWithEmail
@@ -24,22 +28,14 @@ class LoginViewModel
     val password: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
-    val _isLoading: MutableLiveData<Boolean> by lazy {
-        MutableLiveData<Boolean>()
-    }
-    val isLoading: LiveData<Boolean>
-        get() = _isLoading
-    val _isLoginSuccessful: MutableLiveData<Boolean> by lazy {
-        MutableLiveData<Boolean>()
-    }
-    val isLoginSuccessful: LiveData<Boolean>
-        get() = _isLoginSuccessful
 
-    val _failure: MutableLiveData<Failure> by lazy {
-        MutableLiveData<Failure>()
+    private val _loginState: MutableLiveData<LoginState> by lazy {
+       MutableLiveData<LoginState>()
     }
-    val failure: LiveData<Failure>
-        get() = _failure
+
+    val loginState: LiveData<LoginState>
+        get() = _loginState
+
 
     private val isEmailAndPasswordFilled = {
         !email.value.isNullOrBlank() && !password.value.isNullOrBlank()
@@ -47,22 +43,20 @@ class LoginViewModel
 
 
     fun onLogin() {
-            _isLoading.value = true
+            _loginState.value = LoginState.Loading
             signInWithEmail(viewModelScope, params = SignInWithEmail.Params(email.value!!, password.value!!)) {
                 it.fold(::handleFailure, ::handleFireAuthSuccess)
             }
         }
 
     private fun handleFireAuthSuccess(authResult: AuthResult) {
-        _isLoading.value = false
-        _isLoginSuccessful.value = true
+        _loginState.value = LoginState.SuccessfulLogin
     }
 
 
     fun handleFailure(
         failure: Failure
     ) {
-        _isLoading.value = false
-        _failure.value = failure
+        _loginState.value = LoginState.FailedLogin(failure)
     }
 }

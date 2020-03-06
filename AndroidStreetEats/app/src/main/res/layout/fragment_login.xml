@@ -90,18 +90,10 @@
                         android:text="Login" />-->
             </LinearLayout>
 
-            <FrameLayout
-                android:id="@+id/overlayForProgressbar"
-                android:visibility="gone"
-                android:background="@color/colorTransparent"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <ProgressBar
-                    android:id="@+id/loginProgressBar"
-                    android:layout_gravity="center"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"/>
-            </FrameLayout>
+            <include
+                layout="@layout/progress_overlay"
+                android:id="@+id/login_progress_overlay"
+                />
         </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

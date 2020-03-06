@@ -7,6 +7,8 @@ import com.versilistyson.androidstreeteats.di.app.module.FirebaseModule
 import com.versilistyson.androidstreeteats.di.app.module.ViewModelModule
 import com.versilistyson.androidstreeteats.presentation.ui.MainActivity
 import com.versilistyson.androidstreeteats.presentation.ui.authentication.login.LoginFragment
+import com.versilistyson.androidstreeteats.presentation.ui.authentication.signup.CustomerSignupFragment
+import com.versilistyson.androidstreeteats.presentation.ui.authentication.signup.CustomerSignupState
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -21,4 +23,5 @@ interface AppComponent {
 
     fun inject(target: MainActivity)
     fun inject(target: LoginFragment)
+    fun inject(target: CustomerSignupFragment)
 }

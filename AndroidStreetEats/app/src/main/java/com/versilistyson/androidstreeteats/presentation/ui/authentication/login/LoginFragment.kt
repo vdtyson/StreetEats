@@ -1,7 +1,6 @@
 package com.versilistyson.androidstreeteats.presentation.ui.authentication.login
 
 import android.content.Context
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,17 +12,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseUser
-import com.haroldadmin.vector.*
 
 import com.versilistyson.androidstreeteats.databinding.FragmentLoginBinding
 import com.versilistyson.androidstreeteats.di.activityInjector
 import com.versilistyson.androidstreeteats.di.util.DaggerViewModelFactory
 import com.versilistyson.androidstreeteats.domain.exception.Failure
+import com.versilistyson.androidstreeteats.domain.exception.feature_failure.FireAuthFailure
+import com.versilistyson.androidstreeteats.presentation.ui.AppState
 import com.versilistyson.androidstreeteats.presentation.ui.MainSharedViewModel
-import com.versilistyson.androidstreeteats.presentation.ui.common.BaseVectorFragment
-import com.versilistyson.androidstreeteats.presentation.util.observe
 import com.versilistyson.androidstreeteats.presentation.util.showToastMessage
-import java.util.*
 import javax.inject.Inject
 
 
@@ -34,7 +31,7 @@ class LoginFragment : Fragment() {
     @Inject
     lateinit var daggerViewModelFactory: DaggerViewModelFactory
 
-   val loginViewModel: LoginViewModel by viewModels{
+   private val loginViewModel: LoginViewModel by viewModels{
        daggerViewModelFactory
    }
     private val mainSharedViewModel: MainSharedViewModel by activityViewModels {
@@ -67,29 +64,43 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mainSharedViewModel.firebaseUser.observe(viewLifecycleOwner, Observer(::renderToastFromMainActivity))
-        loginViewModel.isLoginSuccessful.observe(viewLifecycleOwner, Observer(::renderLoginSuccessState))
-        loginViewModel.isLoading.observe(viewLifecycleOwner, Observer(::renderLoadingState))
+        mainSharedViewModel.appState.observe(viewLifecycleOwner, Observer(::renderSomething))
+        loginViewModel.loginState.observe(viewLifecycleOwner, Observer(::renderLoginState))
 
     }
 
 
-
-    private fun renderLoginSuccessState(isLoginSuccessful: Boolean) {
-            if(isLoginSuccessful) {
-                mainSharedViewModel.getFirebaseUser()
-            }
-    }
-    private fun renderLoadingState(isLoading: Boolean) {
-        if(isLoading) {
-            loginBinding.overlayForProgressbar.visibility = View.VISIBLE
-            loginBinding.loginProgressBar.animate()
-        } else {
-            loginBinding.overlayForProgressbar.visibility = View.GONE
-            loginBinding.loginProgressBar.clearAnimation()
+    private fun renderSomething(appState: AppState) {
+        when(appState) {
+            is AppState.SignedInUser ->
+                this.showToastMessage("uid from main activity: ${appState.firebaseUser.uid}")
         }
     }
-    private fun renderToastFromMainActivity(firebaseUser: FirebaseUser) {
-            this.showToastMessage("uid from mainActivity: ${firebaseUser.uid}", Toast.LENGTH_LONG)
+    private fun renderLoginState(loginState: LoginState) {
+        when(loginState) {
+            is LoginState.SuccessfulLogin -> {
+                handleLoading(false)
+            }
+            is LoginState.FailedLogin -> {
+                handleLoading(false)
+                handleFailure(loginState.failure)
+            }
+            is LoginState.Loading -> {
+                handleLoading(true)
+            }
+        }
+    }
+    private fun handleFailure(failure: Failure) {
+        when(failure) {
+            is FireAuthFailure.InvalidCredentials -> {
+                this.showToastMessage("Invalid Credentials", Toast.LENGTH_SHORT)
+            }
+            else -> {
+                this.showToastMessage(failure.exception.message ?: "", Toast.LENGTH_SHORT)
+            }
+        }
+    }
+    private fun handleLoading(isLoading: Boolean) {
+        loginBinding.loginProgressOverlay.progressIsVisible = isLoading
     }
 }

@@ -2,6 +2,7 @@ package com.versilistyson.androidstreeteats.data.repository
 
 
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.versilistyson.androidstreeteats.data.datasource.AuthenticationSource
 import com.versilistyson.androidstreeteats.data.util.fireAuthRequest
@@ -30,8 +31,6 @@ class AuthenticationRepository
     override suspend fun fetchSignedInUser(): FirebaseUser? = source.getSignedInUser()
 
     override suspend fun signOut() = source.signOutUser()
-
-
 }
 
 

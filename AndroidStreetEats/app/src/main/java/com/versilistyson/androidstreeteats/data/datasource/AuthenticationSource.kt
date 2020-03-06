@@ -2,6 +2,7 @@ package com.versilistyson.androidstreeteats.data.datasource
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
 import com.versilistyson.androidstreeteats.data.firebase.auth.FirebaseAuthService
 import com.versilistyson.androidstreeteats.domain.datasource.IAuthenticationSource
 import javax.inject.Inject
@@ -31,5 +32,8 @@ class AuthenticationSource
 
     override suspend fun getSignedInUser() =
         authInstance.currentUser
+
+    override fun getFireAuthInstance(): FirebaseAuth =
+        authInstance
 }
 

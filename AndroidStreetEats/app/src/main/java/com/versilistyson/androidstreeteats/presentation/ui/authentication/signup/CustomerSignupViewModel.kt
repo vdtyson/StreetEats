@@ -1,42 +1,35 @@
 package com.versilistyson.androidstreeteats.presentation.ui.authentication.signup
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.squareup.inject.assisted.Assisted
-import com.squareup.inject.assisted.AssistedInject
-import com.versilistyson.androidstreeteats.data.firebase.models.AccountType
-import com.versilistyson.androidstreeteats.domain.entities.BusinessInfo
 import com.versilistyson.androidstreeteats.domain.entities.CustomerInfo
 import com.versilistyson.androidstreeteats.domain.entities.UserInfo
 import com.versilistyson.androidstreeteats.domain.exception.Failure
 import com.versilistyson.androidstreeteats.domain.usecase.CreateCustomerAccount
 import com.versilistyson.androidstreeteats.domain.usecase.CreateUserWithEmail
-import com.versilistyson.androidstreeteats.domain.usecase.CreateBusinessAccount
-import com.versilistyson.androidstreeteats.presentation.ui.common.BaseViewModel
-import com.versilistyson.androidstreeteats.presentation.ui.common.PageState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-data class SignupPageState(
-    val isSignupSuccessful: Boolean = false
-) : PageState<SignupPageState>() {
-    override fun resetToDefaultState(): SignupPageState =
-        SignupPageState()
+sealed class CustomerSignupState {
+    data class FailedSignup(val failure: Failure) : CustomerSignupState()
+    object SuccessfulSignup : CustomerSignupState()
+    object Loading : CustomerSignupState()
 }
 
-class CustomerSignupViewModel
-@AssistedInject constructor(
-    @Assisted initialPageState: SignupPageState,
-    private val createUserWithEmail: CreateUserWithEmail,
-    private val createBusinessAccount: CreateBusinessAccount,
-    private val createCustomerAccount: CreateCustomerAccount
-) : BaseViewModel<SignupPageState>(initialPageState) {
 
-    @AssistedInject.Factory
-    interface Factory {
-        fun create(initialPageState: SignupPageState): CustomerSignupViewModel
+class CustomerSignupViewModel
+@Inject constructor(
+    private val createUserWithEmail: CreateUserWithEmail,
+    private val createCustomerAccount: CreateCustomerAccount
+) : ViewModel() {
+
+    val _customerSignupState: MutableLiveData<CustomerSignupState> by lazy {
+        MutableLiveData<CustomerSignupState>()
     }
+
+    val customerSignupState: LiveData<CustomerSignupState>
+        get() = _customerSignupState
 
     val email: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
@@ -50,45 +43,39 @@ class CustomerSignupViewModel
         MutableLiveData<String>()
     }
 
-    fun signupCustomerAccountWithEmail(
-        email: String,
-        password: String,
-        customerInfo: CustomerInfo,
-        userInfo: UserInfo
-    ) = viewModelScope.launch {
-        setLoadingState(true)
-        launch(Dispatchers.IO) {
-            createUserAndAccountWithEmail(this, email, password, userInfo) { uid ->
-                createCustomerAccount(this, CreateCustomerAccount.Params(uid, customerInfo)) {
-                    it.fold(::handleSignupFailure) {
-                        setState {
-                            copy(isSignupSuccessful = true)
-                        }
+    private fun isValidateCredentials(): Boolean {
+        return !email.value.isNullOrBlank() && !username.value.isNullOrBlank() && !password.value.isNullOrBlank()
+    }
+
+
+    fun writeCustomerAccount() {
+            createUserWithEmail(
+                viewModelScope,
+                CreateUserWithEmail.Params(
+                    email.value!!,
+                    password.value!!,
+                    UserInfo(email = email.value!!)
+                )
+            ) {
+                it.fold(::handleSignupFailure) { authResult ->
+                    createCustomerAccount(
+                        viewModelScope,
+                        CreateCustomerAccount.Params(
+                            authResult.user!!.uid, CustomerInfo(
+                                username.value!!
+                            )
+                        )
+                    ) { customerWriteResult ->
+                        customerWriteResult.fold(::handleSignupFailure,{handleSignupSuccess()})
                     }
                 }
             }
         }
-    }
-
-
-    private fun createUserAndAccountWithEmail(
-        scope: CoroutineScope,
-        email: String,
-        password: String,
-        userInfo: UserInfo,
-        fn: (uid: String) -> Any
-    ) {
-        createUserWithEmail(
-            scope,
-            CreateUserWithEmail.Params(email, password, userInfo)
-        ) {
-            it.fold(::handleSignupFailure) { authResult ->
-                fn(authResult.user!!.uid)
-            }
-        }
-    }
 
     private fun handleSignupFailure(failure: Failure) {
-        TODO()
+        _customerSignupState.value = CustomerSignupState.FailedSignup(failure = failure)
+    }
+    private fun handleSignupSuccess() {
+        _customerSignupState.value =CustomerSignupState.SuccessfulSignup
     }
 }

@@ -6,6 +6,7 @@ import com.versilistyson.androidstreeteats.di.util.DaggerViewModelFactory
 import com.versilistyson.androidstreeteats.di.util.ViewModelKey
 import com.versilistyson.androidstreeteats.presentation.ui.MainSharedViewModel
 import com.versilistyson.androidstreeteats.presentation.ui.authentication.login.LoginViewModel
+import com.versilistyson.androidstreeteats.presentation.ui.authentication.signup.CustomerSignupViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -24,4 +25,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(LoginViewModel::class)
     abstract fun bindLoginViewModel(loginViewModel: LoginViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CustomerSignupViewModel::class)
+    abstract fun bindCustomerSignupViewModel(customerSignupViewModel: CustomerSignupViewModel): ViewModel
 }
