@@ -15,21 +15,24 @@ sealed class Entity<T>:
 data class UserInfo(
     val accountType: AccountType = AccountType.CUSTOMER,
     val email: String = "",
-    val phone: String = ""
+    val phone: String = "",
+    val isAccountCreationComplete: Boolean = false
 ) : Entity<UserInfoDto>() {
     override fun map(): UserInfoDto =
         UserInfoDto(
             accountType = accountType,
             email = email,
-            phone = phone
+            phone = phone,
+            isAccountCreationComplete = false
         )
 }
 
 data class BusinessInfo(
     val ownerFirstName: String = "",
     val ownerLastName: String = "",
-    val vendorName: String = "",
-    val mainCity: String = "",
+    val businessName: String = "",
+    val businessPhone: String = "",
+    val businessEmail: String = "",
     val vendorLogoUrl: String = "",
     val isProAccount: Boolean = false
 ) : Entity<BusinessInfoDto>() {
@@ -38,9 +41,10 @@ data class BusinessInfo(
         BusinessInfoDto(
             ownerFirstName = ownerFirstName,
             ownerLastName = ownerLastName,
-            vendorName = vendorName,
-            mainCity = mainCity,
-            vendorLogoUrl = vendorLogoUrl,
+            businessName = businessName,
+            businessPhone = businessPhone,
+            businessEmail = businessEmail,
+            businessLogoUrl = vendorLogoUrl,
             isProAccount = isProAccount
         )
 }

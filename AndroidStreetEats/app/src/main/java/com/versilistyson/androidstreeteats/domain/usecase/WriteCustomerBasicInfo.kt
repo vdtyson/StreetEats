@@ -7,12 +7,12 @@ import com.versilistyson.androidstreeteats.domain.exception.Failure
 import javax.inject.Inject
 
 //TODO: Create use case for creating customer account
-class CreateCustomerAccount
-@Inject constructor(private val customerRepository: CustomerRepository) : UseCase<Boolean, CreateCustomerAccount.Params>() {
+class WriteCustomerBasicInfo
+@Inject constructor(private val customerRepository: CustomerRepository) : UseCase<Boolean, WriteCustomerBasicInfo.Params>() {
 
     data class Params(val uid: String, val customerInfo: CustomerInfo)
 
     override suspend fun run(params: Params): Either<Failure, Boolean> =
-        customerRepository.createNewCustomerAccount(params.uid, params.customerInfo.map())
+        customerRepository.writeCustomerInfo(params.uid, params.customerInfo.map())
 
 }

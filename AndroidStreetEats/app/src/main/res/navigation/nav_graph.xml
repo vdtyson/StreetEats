@@ -6,7 +6,7 @@
     app:startDestination="@id/authenticationMain">
     <fragment
         android:id="@+id/signupFragment"
-        android:name="com.versilistyson.androidstreeteats.presentation.ui.authentication.signup.CustomerSignupFragment"
+        android:name="com.versilistyson.androidstreeteats.presentation.ui.authentication.signup.SignupFragment"
         android:label="fragment_signup"
         tools:layout="@layout/fragment_signup" />
     <fragment

@@ -14,7 +14,7 @@ import javax.inject.Inject
 class CustomerRepository
 @Inject constructor(private val source: CustomerSource) : ICustomerRepository {
 
-    override suspend fun createNewCustomerAccount(
+    override suspend fun writeCustomerInfo(
         uid: String,
         customerInfo: CustomerInfoDto
     ): Either<Failure, Boolean> =
@@ -22,5 +22,4 @@ class CustomerRepository
 
     override suspend fun getCustomerAccountInfo(uid: String): Either<Failure, CustomerInfo> =
         source.fetchCustomerInfo(uid).objectFetchRequest<CustomerInfoDto, CustomerInfo>(CustomerInfo())
-
 }

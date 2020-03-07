@@ -12,5 +12,5 @@ class FetchUserInfo
     data class Params(val uid: String)
 
     override suspend fun run(params: Params): Either<Failure, UserInfo> =
-        userRepository.getUserInfo(params.uid)
+        userRepository.fetchUserInfo(params.uid)
 }

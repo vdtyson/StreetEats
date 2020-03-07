@@ -7,10 +7,10 @@ import com.versilistyson.androidstreeteats.domain.exception.Failure
 import javax.inject.Inject
 
 //TODO: Create usecase for creating vendor account
-class CreateBusinessAccount
-@Inject constructor(private val businessRepository: BusinessRepository) : UseCase<Boolean, CreateBusinessAccount.Params>() {
+class WriteBusinessBasicInfo
+@Inject constructor(private val businessRepository: BusinessRepository) : UseCase<Boolean, WriteBusinessBasicInfo.Params>() {
     data class Params(val uid: String, val businessInfo: BusinessInfo)
 
     override suspend fun run(params: Params): Either<Failure, Boolean> =
-        businessRepository.createNewVendorAccount(params.uid, params.businessInfo.map())
+        businessRepository.writeBusinessInfo(params.uid, params.businessInfo.map())
 }

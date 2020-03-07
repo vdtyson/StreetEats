@@ -5,15 +5,16 @@ import com.versilistyson.androidstreeteats.domain.entities.BusinessInfo
 data class BusinessInfoDto(
     val ownerFirstName: String,
     val ownerLastName: String,
-    val vendorName: String,
-    val mainCity: String,
-    val vendorLogoUrl: String= "",
+    val businessName: String,
+    val businessPhone: String,
+    val businessEmail: String = "",
+    val businessLogoUrl: String= "",
     val isProAccount: Boolean = false
 ) : FirestoreDto<BusinessInfo>() {
     override fun map(): BusinessInfo =
         BusinessInfo(
-            vendorName = vendorName,
-            vendorLogoUrl = vendorLogoUrl,
+            businessName = businessName,
+            vendorLogoUrl = businessLogoUrl,
             isProAccount = isProAccount
         )
 
@@ -21,9 +22,10 @@ data class BusinessInfoDto(
         hashMapOf(
             "ownerFirstName" to ownerFirstName,
             "ownerLastName" to ownerLastName,
-            "vendorname" to vendorName,
-            "mainCity" to mainCity,
-            "vendorLogoUrl" to vendorLogoUrl,
+            "businessName" to businessName,
+            "businessPhone" to businessPhone,
+            "businessEmail" to businessEmail,
+            "businessLogoUrl" to businessLogoUrl,
             "isProAccount" to isProAccount
         )
 }

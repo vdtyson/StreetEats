@@ -6,7 +6,6 @@ import com.versilistyson.androidstreeteats.data.repository.UserRepository
 import com.versilistyson.androidstreeteats.domain.common.Either
 import com.versilistyson.androidstreeteats.domain.entities.UserInfo
 import com.versilistyson.androidstreeteats.domain.exception.Failure
-import com.versilistyson.androidstreeteats.domain.repository.IAuthenticationRepository
 import javax.inject.Inject
 
 class CreateUserWithEmail
@@ -23,7 +22,7 @@ class CreateUserWithEmail
         return when (authResult) {
             is Either.Right -> {
                 val uid = authResult.right.user!!.uid
-                when (val firestoreResult = userRepo.addNewUser(uid, params.userInfo.map())) {
+                when (val firestoreResult = userRepo.writeUserInfo(uid, params.userInfo.map())) {
                     is Either.Left ->
                         Either.Left(firestoreResult.left)
                     is Either.Right ->

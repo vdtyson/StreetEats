@@ -7,6 +7,8 @@ import java.lang.Exception
 sealed class FireAuthFailure(private val fireAuthException: FirebaseAuthException) :
     Failure.FeatureFailure(fireAuthException) {
 
+    object FormNotFilled: FeatureFailure()
+    object PhoneVerificationFailed: FeatureFailure()
     object NoFirebaseUser: FeatureFailure(Exception("No Firebase user"))
     // Generic Auth Failure
     data class Other(val e: FirebaseAuthException) : FireAuthFailure(e)

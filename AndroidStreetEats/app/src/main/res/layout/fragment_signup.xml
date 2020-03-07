@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="customerSignupViewModel"
-            type="com.versilistyson.androidstreeteats.presentation.ui.authentication.signup.CustomerSignupViewModel"/>
+            name="signUpViewModel"
+            type="com.versilistyson.androidstreeteats.presentation.ui.authentication.signup.SignUpViewModel"/>
 
     </data>
 
@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/signup_background"
-        tools:context=".presentation.ui.authentication.signup.CustomerSignupFragment">
+        tools:context=".presentation.ui.authentication.signup.SignupFragment">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_signUpAccountType"
@@ -37,20 +37,6 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:hint="Username"
-                    app:boxCornerRadiusTopEnd="8dp"
-                    app:boxCornerRadiusTopStart="8dp">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="@={customerSignupViewModel.username}" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
                     android:layout_marginTop="8dp"
                     android:hint="Email"
                     app:boxCornerRadiusTopEnd="8dp"
@@ -59,7 +45,7 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="@={customerSignupViewModel.email}"
+                        android:text="@={signUpViewModel.email}"
                         android:inputType="textEmailAddress" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -76,7 +62,7 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="@={customerSignupViewModel.password}"
+                        android:text="@={signUpViewModel.password}"
                         android:inputType="textPassword" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -85,9 +71,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="52dp"
                     android:layout_marginTop="16dp"
-                    android:onClick="@{() -> customerSignupViewModel.writeCustomerAccount()}"
+                    android:onClick="@{() -> signUpViewModel.onSignup()}"
                     android:text="Sign Up"
                     android:textSize="18sp" />
+
+                <CheckBox
+                    android:onClick="@{() -> signUpViewModel.onBusinessCheckChanged()}"
+                    android:checked="@={signUpViewModel.isBusiness()}"
+                    android:textSize="14sp"
+                    android:text="Business Account"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
             </LinearLayout>
             <include

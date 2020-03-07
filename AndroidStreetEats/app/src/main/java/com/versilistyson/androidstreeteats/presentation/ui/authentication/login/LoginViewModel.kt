@@ -54,7 +54,7 @@ class LoginViewModel
     }
 
 
-    fun handleFailure(
+    private fun handleFailure(
         failure: Failure
     ) {
         _loginState.value = LoginState.FailedLogin(failure)

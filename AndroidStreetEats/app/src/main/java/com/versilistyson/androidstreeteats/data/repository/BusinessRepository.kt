@@ -23,7 +23,7 @@ class BusinessRepository
     override suspend fun getBusinessInfo(uid: String): Either<Failure, BusinessInfo> =
         source.fetchVendorInfo(uid).objectFetchRequest<BusinessInfoDto, BusinessInfo>(BusinessInfo())
 
-    override suspend fun createNewVendorAccount(
+    override suspend fun writeBusinessInfo(
         uid: String,
         businessInfo: BusinessInfoDto
     ): Either<Failure, Boolean> =

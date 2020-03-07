@@ -14,10 +14,10 @@ import javax.inject.Inject
 class UserRepository
 @Inject constructor(private val source: UserSource) : IUserRepository {
 
-    override suspend fun getUserInfo(uid: String): Either<Failure, UserInfo> =
+    override suspend fun fetchUserInfo(uid: String): Either<Failure, UserInfo> =
         source.fetchUserInfo(uid).objectFetchRequest<UserInfoDto, UserInfo>(UserInfo())
 
-    override suspend fun addNewUser(uid: String, user: UserInfoDto): Either<Failure, Boolean> =
+    override suspend fun writeUserInfo(uid: String, user: UserInfoDto): Either<Failure, Boolean> =
         source.writeNewUser(uid, user).taskCompletionRequest()
 
     override suspend fun updateUserInfo(uid: String, user: UserInfoDto): Either<Failure, Boolean> =
