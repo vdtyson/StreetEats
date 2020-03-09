@@ -8,7 +8,12 @@
         android:id="@+id/signupFragment"
         android:name="com.versilistyson.androidstreeteats.presentation.ui.authentication.signup.SignupFragment"
         android:label="fragment_signup"
-        tools:layout="@layout/fragment_signup" />
+        tools:layout="@layout/fragment_signup" >
+        <action
+            android:id="@+id/action_signupFragment_to_customerSignupSuccessFragment"
+            app:destination="@id/customerSignupSuccessFragment"
+            app:enterAnim="@android:anim/slide_in_left" />
+    </fragment>
     <fragment
         android:id="@+id/authenticationMain"
         android:name="com.versilistyson.androidstreeteats.presentation.ui.authentication.main.AuthenticationMainFragment"
@@ -26,4 +31,9 @@
         tools:layout="@layout/fragment_login"
         android:name="com.versilistyson.androidstreeteats.presentation.ui.authentication.login.LoginFragment"
         android:label="LoginFragment" />
+    <dialog
+        android:id="@+id/customerSignupSuccessFragment"
+        android:name="com.versilistyson.androidstreeteats.presentation.ui.authentication.signup.CustomerSignupSuccessFragment"
+        android:label="fragment_customer_signup_success"
+        tools:layout="@layout/fragment_customer_signup_success" />
 </navigation>

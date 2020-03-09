@@ -67,16 +67,16 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mainSharedViewModel.userState.observe(viewLifecycleOwner, Observer(::handleUserState))
+        mainSharedViewModel.userState.observe(viewLifecycleOwner, Observer(::renderUserState))
         loginViewModel.loginState.observe(viewLifecycleOwner, Observer(::renderLoginState))
 
     }
 
 
-    private fun handleUserState(userState: UserState) {
+    private fun renderUserState(userState: UserState) {
         when (userState) {
             is UserState.SignedInUser ->
-                this.showToastMessage("uid from main activity: ${userState.firebaseUser.uid}")
+                showToastMessage(userState.userInfo.accountType.name, Toast.LENGTH_LONG)
         }
     }
 

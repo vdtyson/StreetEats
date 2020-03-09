@@ -20,7 +20,7 @@ data class UserInfo(
 ) : Entity<UserInfoDto>() {
     override fun map(): UserInfoDto =
         UserInfoDto(
-            accountType = accountType,
+            accountType = accountType.name,
             email = email,
             phone = phone,
             isAccountCreationComplete = false
