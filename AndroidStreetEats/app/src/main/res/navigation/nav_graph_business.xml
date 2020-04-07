@@ -26,6 +26,11 @@
             android:id="@+id/action_businessDashboardFragment_to_updateBusinessAccountFragment"
             app:destination="@id/updateBusinessAccountFragment"
             app:popUpTo="@id/businessDashboardFragment" />
+        <action
+            android:id="@+id/action_businessDashboardFragment_to_setupAccountDialogFragment2"
+            app:destination="@id/setupAccountDialogFragment"
+            app:popUpTo="@id/nav_graph_business"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/businessSettingsFragment"
