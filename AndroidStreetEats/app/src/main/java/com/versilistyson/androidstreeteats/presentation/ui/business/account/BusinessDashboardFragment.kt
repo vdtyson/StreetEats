@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import com.versilistyson.androidstreeteats.R
 import com.versilistyson.androidstreeteats.databinding.FragmentBusinessDashboardBinding
 import com.versilistyson.androidstreeteats.di.activityInjector
 import com.versilistyson.androidstreeteats.di.util.DaggerViewModelFactory
@@ -50,8 +51,10 @@ class BusinessDashboardFragment : StartDestinationFragment() {
 
     private fun renderState(businessDashBoardState: BusinessDashBoardState) {
         when(businessDashBoardState) {
-            is BusinessDashBoardState.AccountNotSetup -> TODO()
-            is BusinessDashBoardState.Account -> TODO()
+            is BusinessDashBoardState.AccountNotSetup -> {
+                navController.navigate(R.id.setupAccountDialogFragment)
+            }
+            is BusinessDashBoardState.Account -> return
         }
     }
 }
