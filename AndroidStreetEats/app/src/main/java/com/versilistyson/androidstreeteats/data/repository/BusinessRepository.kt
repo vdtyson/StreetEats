@@ -1,7 +1,7 @@
 package com.versilistyson.androidstreeteats.data.repository
 
-import com.versilistyson.androidstreeteats.data.datasource.BusinessSource
-import com.versilistyson.androidstreeteats.data.firebase.models.BusinessInfoDto
+import com.versilistyson.androidstreeteats.data.datasource.BusinessInfoSource
+import com.versilistyson.androidstreeteats.data.firebase.models.business.BusinessInfoDto
 import com.versilistyson.androidstreeteats.data.util.objectFetchRequest
 import com.versilistyson.androidstreeteats.data.util.taskCompletionRequest
 import com.versilistyson.androidstreeteats.domain.common.Either
@@ -12,7 +12,7 @@ import com.versilistyson.androidstreeteats.domain.repository.IBusinessRepository
 import javax.inject.Inject
 
 class BusinessRepository
-@Inject constructor(private val source: BusinessSource) : IBusinessRepository {
+@Inject constructor(private val source: BusinessInfoSource) : IBusinessRepository {
 
     override suspend fun updateBusinessInfo(
         uid: String,

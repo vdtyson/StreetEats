@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@id/vendorsContainerFragment"
+        android:icon="@drawable/ic_restaurant_menu_black_24dp"
+        android:title="Food Vendors"/>
+    <item
+        android:id="@id/customerProfileFragment"
+        android:icon="@drawable/ic_person_black_24dp"
+        android:title="Profile"/>
+    <item
+        android:id="@id/foodCartFragment"
+        android:icon="@drawable/ic_shopping_basket_black_24dp"
+        android:title="Cart"/>
+</menu>

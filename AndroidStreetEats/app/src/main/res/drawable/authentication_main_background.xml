@@ -11,7 +11,7 @@
         android:right="-300dp"
         android:top="-300dp">
         <shape android:shape="oval">
-            <solid android:color="@color/colorBackground" />
+            <solid android:color="@color/colorTertiary" />
         </shape>
     </item>
 </layer-list>

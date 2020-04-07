@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.versilistyson.androidstreeteats.di.util.DaggerViewModelFactory
 import com.versilistyson.androidstreeteats.di.util.ViewModelKey
-import com.versilistyson.androidstreeteats.presentation.ui.MainSharedViewModel
+import com.versilistyson.androidstreeteats.presentation.ui.AppViewModel
 import com.versilistyson.androidstreeteats.presentation.ui.authentication.login.LoginViewModel
 import com.versilistyson.androidstreeteats.presentation.ui.authentication.signup.SignUpViewModel
+import com.versilistyson.androidstreeteats.presentation.ui.business.account.BusinessDashboardViewModel
+import com.versilistyson.androidstreeteats.presentation.ui.business.settings.BusinessSettingsViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -18,8 +20,8 @@ abstract class ViewModelModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(MainSharedViewModel::class)
-    abstract fun bindMainSharedViewModel(mainSharedViewModel: MainSharedViewModel): ViewModel
+    @ViewModelKey(AppViewModel::class)
+    abstract fun bindMainSharedViewModel(appViewModel: AppViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -30,4 +32,14 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(SignUpViewModel::class)
     abstract fun bindCustomerSignupViewModel(signUpViewModel: SignUpViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(BusinessSettingsViewModel::class)
+    abstract fun bindBusinessSettingsViewModel(businessSettingsViewModel: BusinessSettingsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(BusinessDashboardViewModel::class)
+    abstract fun bindBusinessDashboardViewModel(businessDashboardViewModel: BusinessDashboardViewModel): ViewModel
 }

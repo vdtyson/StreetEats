@@ -1,15 +1,12 @@
 package com.versilistyson.androidstreeteats.data.repository
 
 import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.auth.User
 import com.google.firebase.firestore.ktx.toObject
 import com.versilistyson.androidstreeteats.data.datasource.UserSource
 import com.versilistyson.androidstreeteats.data.firebase.models.UserInfoDto
 import com.versilistyson.androidstreeteats.data.util.awaitTask
-import com.versilistyson.androidstreeteats.data.util.objectFetchRequest
 import com.versilistyson.androidstreeteats.data.util.taskCompletionRequest
 import com.versilistyson.androidstreeteats.domain.common.Either
-import com.versilistyson.androidstreeteats.domain.datasource.IUserSource
 import com.versilistyson.androidstreeteats.domain.entities.UserInfo
 import com.versilistyson.androidstreeteats.domain.exception.Failure
 import com.versilistyson.androidstreeteats.domain.exception.feature_failure.FirestoreFailure

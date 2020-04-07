@@ -1,11 +1,12 @@
-package com.versilistyson.androidstreeteats.presentation.ui.common
+package com.versilistyson.androidstreeteats.presentation.common
 
-import com.haroldadmin.vector.VectorViewModel
-import com.versilistyson.androidstreeteats.domain.exception.Failure
+import androidx.lifecycle.ViewModel
 
-abstract class BaseViewModel<S : PageState<*>>(initialState: S) : VectorViewModel<S>(initialState) {
+abstract class BaseViewModel: ViewModel() {
 
-    protected open fun handleFailure(failure: Failure, extraStateChanges: ((S) -> S)? = null) {
+
+
+    /*protected open fun handleFailure(failure: Failure, extraStateChanges: ((S) -> S)? = null) {
         when(failure) {
             is Failure.NetworkConnection -> {
                 setErrorState(true, failure.e.message, failure, extraStateChanges)
@@ -84,14 +85,5 @@ abstract class BaseViewModel<S : PageState<*>>(initialState: S) : VectorViewMode
         val newState = this
         newState.isLoading = isLoading
         return newState
-    }
+    }*/
 }
-/*
-abstract class BaseViewModel(initialPageState: PageState)<S: PageState> : VectorViewModel<PageState>(initialPageState) {
-    protected open fun setLoadingState() {
-        setState { copy(_isLoading = true)  }
-    }
-    protected open fun setErrorState(errorMessage: String) {
-        setState { copy(_errorMessage = errorMessage, _showError = true) }
-    }
-}*/

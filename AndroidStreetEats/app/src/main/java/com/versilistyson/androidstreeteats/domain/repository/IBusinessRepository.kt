@@ -1,6 +1,6 @@
 package com.versilistyson.androidstreeteats.domain.repository
 
-import com.versilistyson.androidstreeteats.data.firebase.models.BusinessInfoDto
+import com.versilistyson.androidstreeteats.data.firebase.models.business.BusinessInfoDto
 import com.versilistyson.androidstreeteats.domain.common.Either
 import com.versilistyson.androidstreeteats.domain.exception.Failure
 

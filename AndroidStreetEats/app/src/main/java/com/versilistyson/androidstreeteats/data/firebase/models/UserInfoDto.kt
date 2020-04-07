@@ -9,7 +9,7 @@ data class UserInfoDto(
     val accountType: String = "",
     val email: String = "",
     val phone: String = "",
-    val isAccountCreationComplete: Boolean = false
+    val accountSetupCompletionLevel: Int = 0 // 0 -- not setup up at all ; 1 -- Important parts filled out but still info to fill ; 2 -- setup complete
 ) : FirestoreDto<UserInfo>() {
 
     override fun map(): UserInfo {
@@ -22,7 +22,7 @@ data class UserInfoDto(
             accountType = accountType,
             email = email,
             phone = phone,
-            isAccountCreationComplete = isAccountCreationComplete
+           accountSetupCompletionLevel = accountSetupCompletionLevel
         )
     }
 
@@ -31,8 +31,7 @@ data class UserInfoDto(
         hashMapOf(
             "accountType" to accountType,
             "email" to email,
-            "phone" to phone,
-            "isAccountCreationComplete" to isAccountCreationComplete
+            "phone" to phone
         )
 
 

@@ -3,7 +3,7 @@ package com.versilistyson.androidstreeteats.domain.entities
 import com.versilistyson.androidstreeteats.data.firebase.models.AccountType
 import com.versilistyson.androidstreeteats.data.firebase.models.CustomerInfoDto
 import com.versilistyson.androidstreeteats.data.firebase.models.UserInfoDto
-import com.versilistyson.androidstreeteats.data.firebase.models.BusinessInfoDto
+import com.versilistyson.androidstreeteats.data.firebase.models.business.BusinessInfoDto
 import com.versilistyson.androidstreeteats.domain.common.Mappable
 
 /*interface EmptyEntity<T> {
@@ -16,14 +16,14 @@ data class UserInfo(
     val accountType: AccountType = AccountType.CUSTOMER,
     val email: String = "",
     val phone: String = "",
-    val isAccountCreationComplete: Boolean = false
+    val accountSetupCompletionLevel: Int = 0 // 0 -- not setup up at all ; 1 -- Important parts filled out but still info to fill ; 2 -- setup complete
 ) : Entity<UserInfoDto>() {
     override fun map(): UserInfoDto =
         UserInfoDto(
             accountType = accountType.name,
             email = email,
             phone = phone,
-            isAccountCreationComplete = false
+            accountSetupCompletionLevel = accountSetupCompletionLevel
         )
 }
 
@@ -33,8 +33,10 @@ data class BusinessInfo(
     val businessName: String = "",
     val businessPhone: String = "",
     val businessEmail: String = "",
-    val vendorLogoUrl: String = "",
-    val isProAccount: Boolean = false
+    val businessLogoUrl: String = "",
+    val adminAccessCode: String = "",
+    val isProAccount: Boolean = false,
+    val requestAccessCodeOnLogin: Boolean = false
 ) : Entity<BusinessInfoDto>() {
 
     override fun map(): BusinessInfoDto =
@@ -44,8 +46,10 @@ data class BusinessInfo(
             businessName = businessName,
             businessPhone = businessPhone,
             businessEmail = businessEmail,
-            businessLogoUrl = vendorLogoUrl,
-            isProAccount = isProAccount
+            businessLogoUrl = businessLogoUrl,
+            adminAccessCode = adminAccessCode,
+            isProAccount = isProAccount,
+            requestAccessCodeOnLogin = requestAccessCodeOnLogin
         )
 }
 

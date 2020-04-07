@@ -1,45 +1,40 @@
 package com.versilistyson.androidstreeteats.presentation.ui.authentication.signup
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.versilistyson.androidstreeteats.R
 import com.versilistyson.androidstreeteats.data.firebase.models.AccountType
 import com.versilistyson.androidstreeteats.databinding.FragmentSignupBinding
 import com.versilistyson.androidstreeteats.di.activityInjector
 import com.versilistyson.androidstreeteats.di.util.DaggerViewModelFactory
 import com.versilistyson.androidstreeteats.presentation.ui.UserState
-import com.versilistyson.androidstreeteats.presentation.ui.MainSharedViewModel
+import com.versilistyson.androidstreeteats.presentation.ui.AppViewModel
+import com.versilistyson.androidstreeteats.presentation.common.fragment.BaseFragment
+import com.versilistyson.androidstreeteats.presentation.util.addOnBackPressedCallBack
 import com.versilistyson.androidstreeteats.presentation.util.showToastMessage
-import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
 
-class SignupFragment : Fragment() {
+class SignupFragment : BaseFragment() {
 
     private lateinit var signupBinding: FragmentSignupBinding
 
     @Inject
     lateinit var daggerViewModelFactory: DaggerViewModelFactory
 
-    private val mainSharedViewModel: MainSharedViewModel by activityViewModels {
+    private val appViewModel: AppViewModel by activityViewModels {
         daggerViewModelFactory
     }
     private val signUpViewModel: SignUpViewModel by viewModels {
         daggerViewModelFactory
     }
-
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,7 +56,19 @@ class SignupFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         signUpViewModel.signUpState.observe(viewLifecycleOwner, Observer(::renderSignUpState))
         signUpViewModel.signupEvent.observe(viewLifecycleOwner, Observer(::handleSignUpEvent))
-        mainSharedViewModel.userState.observe(viewLifecycleOwner, Observer(::renderUserState) )
+        appViewModel.userState.observe(viewLifecycleOwner, Observer(::renderUserState) )
+    }
+
+    override fun onStart() {
+        super.onStart()
+        addOnBackPressedCallBack(
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    findNavController().navigate(SignupFragmentDirections.actionSignupFragmentToAuthenticationMainFragment())
+                }
+            }
+        )
+
     }
 
     private fun renderSignUpState(signUpState: SignUpState) {
@@ -79,16 +86,8 @@ class SignupFragment : Fragment() {
 
     private fun renderUserState(userState: UserState) {
         when(userState) {
-            is UserState.SignedInUser -> {
-                showToastMessage(userState.userInfo.accountType.name)
-                when(userState.userInfo.accountType) {
-                    AccountType.BUSINESS -> {}
-                    AccountType.CUSTOMER -> {
-                        findNavController().navigate(SignupFragmentDirections.actionSignupFragmentToCustomerSignupSuccessFragment())
-                    }
-                }
-            }
-            UserState.NoSignedInUser -> {}
+            is UserState.Authenticated -> {}
+            UserState.Unauthenticated -> {}
         }
     }
 

@@ -1,9 +1,7 @@
 package com.versilistyson.androidstreeteats.domain.datasource
 
 import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
-import com.versilistyson.androidstreeteats.data.datasource.FirestoreDataSource
 import com.versilistyson.androidstreeteats.data.firebase.models.CustomerInfoDto
 
 interface ICustomerSource: BaseDataSource {

@@ -4,8 +4,60 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryVariant</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
+        <item name="colorOnSecondary">@color/colorOnSecondary</item>
+        <item name="colorOnSurface">@color/colorOnSurface</item>
+        <item name="colorError">@color/colorError</item>
+        <item name="colorOnError">@color/colorOnError</item>
     </style>
+
+    <style name="Widget.StreetEats.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">340dp</item>
+        <item name="cardCornerRadius">12dp</item>
+        <!--<item name="contentPaddingLeft">16dp</item>
+        <item name="contentPaddingRight">16dp</item>
+        <item name="contentPaddingTop">32dp</item>
+        <item name="contentPaddingBottom">32dp</item>-->
+    </style>
+
+    <style name="Widget.StreetEats.Button" parent="Widget.MaterialComponents.Button">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Widget.StreetEats.Button.Large" parent="Widget.MaterialComponents.Button">
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">52dp</item>
+    </style>
+
+    <style name="Widget.StreetEats.Button.OutlineButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textSize">18sp</item>
+        <item name="android:strokeWidth">1.0</item>
+        <item name="strokeColor">@color/colorPrimary</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">52dp</item>
+    </style>
+    <style name="Widget.StreetEats.Button.TextButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="CardViewLinearLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:layout_marginTop">32dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginBottom">32dp</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
 
 </resources>

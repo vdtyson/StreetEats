@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_main"
+    app:startDestination="@id/splashFragment"
+    tools:ignore="UnusedNavigation">
+    <fragment
+        tools:layout="@layout/fragment_splash"
+        android:id="@+id/splashFragment"
+        android:name="com.versilistyson.androidstreeteats.SplashFragment"
+        android:label="SplashFragment" />
+    <include app:graph="@navigation/nav_graph_authentication" />
+    <include app:graph="@navigation/nav_graph_business" />
+    <include app:graph="@navigation/nav_graph_customer" />
+    <action
+        android:id="@+id/action_global_nav_graph_authentication"
+        app:destination="@id/nav_graph_authentication"
+        app:popUpTo="@id/nav_graph_main"
+        app:popUpToInclusive="true" />
+    <action
+        android:id="@+id/action_global_nav_graph_business"
+        app:destination="@id/nav_graph_business"
+        app:popUpTo="@id/nav_graph_main"
+        app:popUpToInclusive="true" />
+    <action
+        android:id="@+id/action_global_nav_graph_customer"
+        app:destination="@id/nav_graph_customer"
+        app:popUpTo="@id/nav_graph_main"
+        app:popUpToInclusive="true" />
+</navigation>
