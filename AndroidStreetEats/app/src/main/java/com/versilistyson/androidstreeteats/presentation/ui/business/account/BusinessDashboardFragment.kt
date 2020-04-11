@@ -52,7 +52,7 @@ class BusinessDashboardFragment : StartDestinationFragment() {
     private fun renderState(businessDashBoardState: BusinessDashBoardState) {
         when(businessDashBoardState) {
             is BusinessDashBoardState.AccountNotSetup -> {
-                navController.navigate(R.id.action_businessDashboardFragment_to_setupAccountDialogFragment2)
+                navController.navigate(R.id.action_businessDashboardFragment_to_businessSetupFragment)
             }
             is BusinessDashBoardState.Account -> return
         }

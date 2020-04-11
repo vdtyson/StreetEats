@@ -95,4 +95,6 @@ dependencies {
     // Mapbox and Location Services
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.0.0'
     implementation 'com.google.android.gms:play-services-location:17.0.0'
+    // ViewPager 2
+    implementation 'androidx.viewpager2:viewpager2:1.1.0-alpha01'
 }
