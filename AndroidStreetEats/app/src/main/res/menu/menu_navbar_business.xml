@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@id/businessStorefrontsFragment"
+        android:icon="@drawable/ic_local_shipping_black_24dp"
+        android:title="Storefronts"/>
+    <item
+        android:id="@id/businessTrackFragment"
+        android:icon="@drawable/ic_location_on_black_24dp"
+        android:title="Track"/>
+    <item
+        android:id="@id/businessDashboardFragment"
+        android:icon="@drawable/ic_card_travel_black_24dp"
+        android:title="Dashboard"/>
+    <item
+        android:id="@id/businessSettingsFragment"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="Settings"/>
+</menu>
